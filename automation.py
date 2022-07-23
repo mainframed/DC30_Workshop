@@ -394,12 +394,13 @@ try:
   elif args.users:
     p = Path("{}/users".format(cwd)).glob('**/*.ebcdic')
     files = [x for x in p if x.is_file()]
-    for jcl_file in files:
+    for jcl_file in sorted(files):
         print("*** Submitting {}".format(jcl_file))
 
         with open(jcl_file,"rb") as jcl:
             build.submit(jcl.read(),port=3506,ebcdic=True)
         build.wait_for_string("HASP250 {}     IS PURGED".format(jcl_file.stem.split('.')[0]))
+        build.check_maxcc(jcl_file.stem.split('.')[0])
 
     build.shutdown_mvs(cust=True)
 

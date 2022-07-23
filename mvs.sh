@@ -86,6 +86,10 @@ echo "[*] Starting encrypted TN3270 listener on port 3223"
 echo "[*] Starting Unencrypted TN3270 listener on port 21021"
 socat -v TCP4-LISTEN:21021,reuseaddr,fork tcp4:127.0.0.1:2121 &
 
+echo "[*] Launching web3270"
+
+python3 -u /web3270/server.py --config /config --certs /certs &
+
 cd MVSCE
 echo "[*] Starting Hercules"
 hercules -f /config/local.cnf -r conf/mvsce.rc --daemon > /logs/hercules.log
