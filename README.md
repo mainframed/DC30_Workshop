@@ -22,20 +22,20 @@ docker run -d \
   -p 3506:3506 \
   -p 8888:8888 \
   -p 21021:2121 \
-  -v /opt/docker/mvsce:/config \
-  -v /opt/docker/mvsce/printers:/printers \
-  -v /opt/docker/mvsce/punchcards:/punchcards \
-  -v /opt/docker/mvsce/logs:/logs \
-  -v /opt/docker/mvsce/dasd:/dasd \
-  -v /opt/docker/mvsce/certs:/certs \
+  -v /opt/docker/dc30:/config \
+  -v /opt/docker/dc30/printers:/printers \
+  -v /opt/docker/dc30/punchcards:/punchcards \
+  -v /opt/docker/dc30/logs:/logs \
+  -v /opt/docker/dc30/dasd:/dasd \
+  -v /opt/docker/dc30/certs:/certs \
   --restart unless-stopped \
   mainframed767/defcon30
 ```
 
-Ports 2323/3270 are encrypted/unencrypted 3270 servers
-Ports 2121/21021 are encrypted/unencrypted FTP servers
-Port 8888 is the hercules webserver u/p is docker
-Ports 3505/3506 are ebcdic/ascii punch card readers
+- Ports 2323/3270 are encrypted/unencrypted 3270 servers
+- Ports 2121/21021 are encrypted/unencrypted FTP servers
+- Port 8888 is the hercules webserver u/p is docker
+- Ports 3505/3506 are ebcdic/ascii punch card readers
 
 
 ## Building from scratch
