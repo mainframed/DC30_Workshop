@@ -160,7 +160,7 @@ EXTEND  VOLUME=MVSRES,DSNAME=SYS1.LINKLIB
 //*
 ''')
 
-for x in range(0,3):
+for x in range(0,30):
     with open("users/DC{}.jcl".format(str(x).zfill(2)), 'w') as jclfile:
         print("*** Writting users/DC{}.jcl".format(str(x).zfill(2)))
         jclfile.write(USERJOB.format(usern="DC{}".format(str(x).zfill(2))))
