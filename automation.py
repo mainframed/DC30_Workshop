@@ -382,7 +382,7 @@ try:
         print("[ERROR] Could not upload files to FTP")
         sys.exit(-1)
     print("*** Running command: lftp -e \"cd DEFCON.OVERFLOW; put {}/ARBAUTH/PATTERN; bye\" -u ibmuser,sys1 localhost:2121".format(cwd))
-    p = os.system("lftp -e \"cd DEFCON.OVERFLOW; put {}/ARBAUTH/PATTERN; bye\" -u ibmuser,sys1 localhost:2121".format(cwd))
+    p = os.system("lftp -e \"cd DEFCON.OVERFLOW.ARBAUTH; put {}/ARBAUTH/PATTERN; bye\" -u ibmuser,sys1 localhost:2121".format(cwd))
 
     print("Return code:{}".format(p))
     if p != 0:

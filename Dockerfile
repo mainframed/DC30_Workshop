@@ -1,8 +1,7 @@
-# First compile hello world
+
 
 FROM mainframed767/jcc:wine as getsploit_builder
-
-# compile and link hello.c to hello.load
+# First compile and link hello.c to hello.load
 WORKDIR /
 COPY GETSPLOIT/hello.c hello.c
 RUN wine /jcc/jcc.exe -I/jcc/include/ -o hello.c
@@ -20,9 +19,11 @@ WORKDIR /builder
 ADD ./ /builder/
 COPY --from=getsploit_builder /hello.load /builder/GETSPLOIT/hello.load
 RUN git clone --depth 1 https://github.com/jake-mainframe/ARBAUTH
+# Build the JCL
 RUN ./upload.py motd.txt
 RUN ./usersjcl.py
 RUN for i in users/*.jcl; do rdrprep $i; mv reader.jcl $i.ebcdic; ls $i.ebcdic; done
+# Submit the JCL to MVS/CE
 RUN python3 -u automation.py --mvsce /MVSCE --initial
 RUN python3 -u automation.py --mvsce /MVSCE --ftp
 RUN python3 -u automation.py --mvsce /MVSCE --users
@@ -40,6 +41,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
     -newkey rsa:2048 -keyout ca.key \
     -out ca.csr
 ADD web3270.ini /web3270/
+WORKDIR /
+# Copy the built LPAR 
 COPY --from=MVSCE_builder /MVSCE /MVSCE
 COPY mvs.sh /
 RUN chmod +x /mvs.sh

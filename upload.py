@@ -109,6 +109,19 @@ sources = '''//*
 $$
 '''
 
+easteregg = '''//*
+//* Adds Easter Eggs
+//*
+//SOURCES   EXEC PGM=IEBUPDTE,REGION=1024K,PARM=NEW
+//SYSPRINT  DD SYSOUT=*
+//SYSUT2    DD DSN=WHITE.RABBIT,DISP=SHR
+//SYSIN     DD DATA,DLM=$$
+{sources}
+$$
+'''
+
+hint = "./ ADD NAME=EASTREGG,LIST=ALL\nDid you follow the WHITE.RABBIT?"
+
 def upload_rdrprep_file(filename,member=False,dlm="><"):
     '''Uses rdrprep to upload a Binary file'''
     if not member:
@@ -143,8 +156,15 @@ create_pds = '''//*
 //OVERFLOW DD  DSN=DEFCON.OVERFLOW,DISP=(NEW,CATLG),
 //             UNIT=SYSDA,VOL=SER=PUB000,
 //             SPACE=(TRK,(3,3,3),RLSE),
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=400,BLKSIZE=400)
+//ARBAUTH  DD  DSN=DEFCON.OVERFLOW.ARBAUTH,DISP=(NEW,CATLG),
+//             UNIT=SYSDA,VOL=SER=PUB000,
+//             SPACE=(TRK,(3,3,3),RLSE),
 //             DCB=(DSORG=PS,RECFM=FB,LRECL=30000,BLKSIZE=30000)
 //SOURCE   DD  DSN=DEFCON.SOURCE,DISP=(NEW,CATLG),
+//             UNIT=SYSDA,VOL=SER=PUB000,
+//             SPACE=(TRK,(3,3,3),RLSE),DCB=SYS1.MACLIB
+//WHTERABT DD  DSN=WHITE.RABBIT,DISP=(NEW,CATLG),
 //             UNIT=SYSDA,VOL=SER=PUB000,
 //             SPACE=(TRK,(3,3,3),RLSE),DCB=SYS1.MACLIB
 '''
@@ -170,7 +190,10 @@ with open("GETSPLOIT/hello.c", "r") as infile:
 with open("ARBAUTH/arbauth.jcl", "r") as infile:
     arbauthsrc = "./ ADD NAME=ARBAUTH,LIST=ALL\n{}".format( infile.read() )
 
-jcl += sources.format(sources=hellosrc+arbauthsrc)
+jcl += sources.format(sources=hellosrc+arbauthsrc+hint)
+
+with open("matrix.txt", "r") as infile:
+    jcl += easteregg.format( sources = "./ ADD NAME=SCRIPT,LIST=ALL\n{}".format( infile.read() ) )
 
 
 add_rakf_profiles = '''//*

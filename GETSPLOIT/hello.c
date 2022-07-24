@@ -6,7 +6,7 @@ int main (int argc, char ** argv) {
    char buff[150];
    printf("Hi, D3CF0N attendee what is your handle?\n");
    gets(buff);
-   printf("Wake up, %s\nThe Matrix has you...", buff);
+   printf("Wake up, %s\n\nThe Matrix has you...\n\n", buff);
    printf("Follow the white rabbit.\n\n", buff);
    printf("            _________________\n"
 "           /            __   \\ \n"

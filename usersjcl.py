@@ -37,7 +37,11 @@ USERJOB = ('''//{usern} JOB (1),'ADD {usern}',CLASS=S,MSGLEVEL=(1,1),
 //OVERFLOW DD  DSN={usern}.OVERFLOW,DISP=(NEW,CATLG),    
 //             UNIT=SYSDA,VOL=SER=PUB000,                          
 //             SPACE=(TRK,(3,3,3),RLSE),                              
-//             DCB=DEFCON.OVERFLOW      
+//             DCB=DEFCON.OVERFLOW     
+//OVERFLOW DD  DSN={usern}.OVERFLOW.ARBAUTH,DISP=(NEW,CATLG),    
+//             UNIT=SYSDA,VOL=SER=PUB000,                          
+//             SPACE=(TRK,(3,3,3),RLSE),                              
+//             DCB=DEFCON.OVERFLOW.ARBAUTH      
 //DUMP001  DD  DSN={usern}.DUMP001,DISP=(NEW,CATLG),    
 //             UNIT=SYSDA,VOL=SER=PUB000,                          
 //             SPACE=(TRK,(10,5),RLSE),                              
@@ -64,6 +68,16 @@ USERJOB = ('''//{usern} JOB (1),'ADD {usern}',CLASS=S,MSGLEVEL=(1,1),
 //* SYSUT1 is source SYSUT2 is destination
 //SYSUT1 DD DSN=DEFCON.OVERFLOW,DISP=SHR
 //SYSUT2 DD DSN={usern}.OVERFLOW,DISP=SHR
+//SYSIN DD DUMMY
+//*
+//* 
+//* COPY ALL MEMBERS FROM ONE PDS TO ANOTHER
+//*
+//COPYOVRF EXEC PGM=IEBCOPY
+//SYSPRINT DD SYSOUT=*
+//* SYSUT1 is source SYSUT2 is destination
+//SYSUT1 DD DSN=DEFCON.OVERFLOW.ARBAUTH,DISP=SHR
+//SYSUT2 DD DSN={usern}.OVERFLOW.ARBAUTH,DISP=SHR
 //SYSIN DD DUMMY
 //*
 //COPYSRC  EXEC PGM=IEBCOPY
@@ -146,7 +160,7 @@ EXTEND  VOLUME=MVSRES,DSNAME=SYS1.LINKLIB
 //*
 ''')
 
-for x in range(0,30):
+for x in range(0,3):
     with open("users/DC{}.jcl".format(str(x).zfill(2)), 'w') as jclfile:
         print("*** Writting users/DC{}.jcl".format(str(x).zfill(2)))
         jclfile.write(USERJOB.format(usern="DC{}".format(str(x).zfill(2))))
