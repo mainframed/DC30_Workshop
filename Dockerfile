@@ -44,6 +44,7 @@ ADD web3270.ini /web3270/
 WORKDIR /
 # Copy the built LPAR 
 COPY --from=MVSCE_builder /MVSCE /MVSCE
+RUN sed -i "s/0400.8/0400.32/g" /MVSCE/conf/local.cnf
 COPY mvs.sh /
 RUN chmod +x /mvs.sh
 VOLUME ["/config","/dasd","/printers","/punchcards","/logs", "/certs"]
