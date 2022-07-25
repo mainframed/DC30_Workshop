@@ -15,6 +15,9 @@
 //* http://www.kicksfortso.com/same/KooKbooK/KooKbooK-251project.htm
 //* 2. VTAM must know about the terminals.
 //SYSIN     DD *
+./ ADD NAME=ATCCON00,LIST=ALL
+APPLTSO,                                             TSO APPLS         X
+DC30T                                                LOCAL 3270S        
 ./ ADD NAME=DC30T,LIST=ALL
 LCL400   LBUILD SUBAREA=2                                               
 CUU400   LOCAL TERM=3277,CUADDR=400,ISTATUS=ACTIVE,                    +
@@ -175,12 +178,6 @@ WPBUF=(64,,64,F)                   /*MESSAGE CONTROL BUFFER POOL     */
  LIST
  TOP
  CHANGE /USERMAX=8, /USERMAX=32,/
- LIST
- SAVE
- END
- EDIT 'SYS1.VTAMLST(ATCCON00)' DATA
- LIST
- CHANGE /LCL400/DC30T /
  LIST
  SAVE
  END
