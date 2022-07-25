@@ -27,10 +27,10 @@ args = my_parser.parse_args()
 
 cwd = os.getcwd()
 
-print("Current working directory {}".format(cwd))
+print("[AUTOMATION] Current working directory {}".format(cwd))
 
 if not Path("jcl/upload.jcl").is_file():
-    print("You must run ./upload.py motd.txt first")
+    print("[ERROR] You must run ./upload.py motd.txt first")
     sys.exit()
 
 error_check = [
@@ -87,7 +87,7 @@ class herc_automation:
             if len(l.strip()) > 0:
                 if len(l.strip()) > 3 and l[0:2] == '/*' and l[2:4].isnumeric():
                     reply_num = l[2:4]
-                    print("Reply number set to {}".format(reply_num))
+                    print("[AUTOMATION] Reply number set to {}".format(reply_num))
                 if  "HHC90020W" not in l and "HHC00007I" not in l and "HHC00107I" not in l and "HHC00100I" not in l:
                     # ignore these messages, they're just noise
                     # HHC90020W 'hthread_setschedparam()' failed at loc=timer.c:193: rc=22: Invalid argument
@@ -123,14 +123,14 @@ class herc_automation:
         ''' check to make sure hercules is still running '''
         while hercproc.poll() is None:
             if quit_herc_event.is_set() or reset_herc_event.is_set():
-                print("Quit Event enabled exiting hercproc monitoring")
+                print("[AUTOMATION] Quit Event enabled exiting hercproc monitoring")
                 return
             if kill_hercules.is_set():
                 hercproc.kill()
                 break
             continue
 
-        print("ERROR - Hercules Exited Unexpectedly")
+        print("[ERROR] - Hercules Exited Unexpectedly")
         os._exit(1)
 
     def check_maxcc(self, jobname, steps_cc={}, printer_file='printers/prt00e.txt'):
@@ -138,7 +138,7 @@ class herc_automation:
           If the step is in steps_cc, check the step vs the cc in the dictionary
           otherwise checks if step is zero
       '''
-      print("Checking {} job results".format(jobname))
+      print("[AUTOMATION] Checking {} job results".format(jobname))
 
       found_job = False
       failed_step = False
@@ -182,8 +182,8 @@ class herc_automation:
           raise ValueError(error)
 
 
-    def reset_hercules(self):
-        print('Restarting hercules')
+    def reset_hercules(self,clpa=False):
+        print('[AUTOMATION] Restarting hercules')
         self.quit_hercules(msg=False)
 
         # drain STDERR and STDOUT
@@ -206,10 +206,15 @@ class herc_automation:
         except:
             raise Exception('hercules not found')
 
-        print("Launching hercules")
+        print("[AUTOMATION] Launching hercules")
 
-        h = ["hercules", '--externalgui', '-f',self.config, '-r', self.rc]
-        print(h)
+        h = [ "hercules", '--externalgui', '-f',self.config ]
+
+        if not clpa:
+            h.append("-r")
+            h.append(self.rc)
+
+        print("[AUTOMATION] Launching hercules with: {}".format(h))
 
         self.hercproc = subprocess.Popen(h,
                     stdin=subprocess.PIPE,
@@ -222,23 +227,23 @@ class herc_automation:
 
         self.rc = self.hercproc.poll()
         if self.rc is not None:
-            raise("Unable to start hercules")
-        print("Hercules launched")
+            raise("[AUTOMATION] Unable to start hercules")
+        print("[AUTOMATION] Hercules launched")
         #self.write_logs()
-        print("Hercules Re-initialization Complete")
+        print("[AUTOMATION] Hercules Re-initialization Complete")
 
 
     def quit_hercules(self, msg=True):
         if msg:
-            print("Shutting down hercules")
+            print("[AUTOMATION] Shutting down hercules")
         if not self.hercproc or self.hercproc.poll() is not None:
-            print("Hercules already shutdown")
+            print("[AUTOMATION] Hercules already shutdown")
             return
         quit_herc_event.set()
         self.send_herc('quit')
         self.wait_for_string('Hercules shutdown complete', stderr=True)
         if msg:
-            print('Hercules has exited')
+            print('[AUTOMATION] Hercules has exited')
 
     def wait_for_string(self, string_to_waitfor, stderr=False, timeout=False):
         '''
@@ -254,7 +259,7 @@ class herc_automation:
         if not timeout and self.timeout:
             timeout=self.timeout
 
-        print("Waiting for string to appear in hercules log: {}".format(string_to_waitfor))
+        print("[AUTOMATION] Waiting for string to appear in hercules log: {}".format(string_to_waitfor))
 
         while True:
             if time.time() > time_started + timeout:
@@ -287,9 +292,16 @@ class herc_automation:
 
     def ipl(self, step_text='', clpa=False):
         print(step_text)
-        self.reset_hercules()
+        self.reset_hercules(clpa=clpa)
         #self.wait_for_string("0:0151 CKD")
-        
+
+        if clpa:
+            self.send_herc("ipl 150")
+            self.wait_for_string("HHC00010A Enter input for console 0:0009")
+            self.send_oper("r 0,clpa")
+            # self.wait_for_string('$HASP426 SPECIFY OPTIONS - HASP-II, VERSION JES2 4.1')
+            # self.send_oper('r 0,noreq')
+                             #IKT005I TCAS IS INITIALIZED
         self.wait_for_string("IKT005I TCAS IS INITIALIZED")
 
     def shutdown_mvs(self, cust=False):
@@ -308,7 +320,7 @@ class herc_automation:
 
     def send_herc(self, command=''):
         ''' Sends hercules commands '''
-        print("Sending Hercules Command: {}".format(command))
+        print("[AUTOMATION] Sending Hercules Command: {}".format(command))
         self.hercproc.stdin.write(command+"\n")
         self.hercproc.stdin.flush()
 
@@ -337,7 +349,7 @@ class herc_automation:
             sock.close()
 
 
-print("Changing to MVS/CE Folder {}".format(args.mvsce))
+print("[AUTOMATION] Changing to MVS/CE Folder {}".format(args.mvsce))
 os.chdir(args.mvsce)
 try:
     os.remove("punchcards/pch00d.txt")
@@ -345,27 +357,28 @@ except:
     print("punchcards/pch00d.txt Already deleted")
 build = herc_automation()
 try:
-  build.ipl()
+  
   if args.initial:
-    print("*** Submitting {}/jcl/MACLFTPD.jcl".format(cwd))
+    build.ipl(clpa=False)
+    print("[AUTOMATION]  Submitting {}/jcl/MACLFTPD.jcl".format(cwd))
     with open("{}/jcl/MACLFTPD.jcl".format(cwd),"r") as jcl:
         build.submit(jcl.read())
     build.wait_for_string("HASP250 MACLFTPD IS PURGED")
     build.check_maxcc("MACLFTPD")
 
-    print("*** Submitting {}/jcl/logon_screen.jcl".format(cwd))
+    print("[AUTOMATION]  Submitting {}/jcl/logon_screen.jcl".format(cwd))
     with open("{}/jcl/logon_screen.jcl".format(cwd),"r") as jcl:
         build.submit(jcl.read())
     build.wait_for_string("HASP250 AWESOME  IS PURGED")
     build.check_maxcc("AWESOME")
 
-    print("*** Submitting {}/jcl/upload.jcl".format(cwd))
+    print("[AUTOMATION]  Submitting {}/jcl/upload.jcl".format(cwd))
     with open("{}/jcl/upload.jcl".format(cwd),"r") as jcl:
         build.submit(jcl.read())
     build.wait_for_string("HASP250 UPLOAD   IS PURGED")
     build.check_maxcc("UPLOAD")
 
-    print("*** Submitting {}/jcl/terminals.jcl".format(cwd))
+    print("[AUTOMATION]  Submitting {}/jcl/terminals.jcl".format(cwd))
     with open("{}/jcl/terminals.jcl".format(cwd),"r") as jcl:
         build.submit(jcl.read())
     build.wait_for_string("HASP250 TERMINAL IS PURGED")
@@ -373,18 +386,19 @@ try:
 
     build.shutdown_mvs(cust=True)
   elif args.ftp:
-    print("*** FTP'ing OVERFLOW files")
+    build.ipl(clpa=False)
+    print("[AUTOMATION]  FTP'ing OVERFLOW files")
     build.wait_for_string("FTP005I Startup Complete")
-    print("*** Running command: for i in {}/overflows/*; do lftp -e \"cd DEFCON.OVERFLOW; put $i; bye\" -u ibmuser,sys1 localhost:2121; done".format(cwd))
+    print("[AUTOMATION] Running command: for i in {}/overflows/*; do lftp -e \"cd DEFCON.OVERFLOW; put $i; bye\" -u ibmuser,sys1 localhost:2121; done".format(cwd))
     p = os.system("for i in {}/overflows/*; do lftp -e \"cd DEFCON.OVERFLOW; put $i; bye\" -u ibmuser,sys1 localhost:2121; done".format(cwd))
     print("Return code:{}".format(p))
     if p != 0:
         print("[ERROR] Could not upload files to FTP")
         sys.exit(-1)
-    print("*** Running command: lftp -e \"cd DEFCON.OVERFLOW; put {}/ARBAUTH/PATTERN; bye\" -u ibmuser,sys1 localhost:2121".format(cwd))
+    print("[AUTOMATION] Running command: lftp -e \"cd DEFCON.OVERFLOW; put {}/ARBAUTH/PATTERN; bye\" -u ibmuser,sys1 localhost:2121".format(cwd))
     p = os.system("lftp -e \"cd DEFCON.OVERFLOW.ARBAUTH; put {}/ARBAUTH/PATTERN; bye\" -u ibmuser,sys1 localhost:2121".format(cwd))
 
-    print("Return code:{}".format(p))
+    print("[AUTOMATION] Return code:{}".format(p))
     if p != 0:
         print("[ERROR] Could not upload files to FTP")
         sys.exit(-1)
@@ -392,10 +406,12 @@ try:
     build.shutdown_mvs(cust=True)
   
   elif args.users:
+
+    build.ipl(clpa=True)
     p = Path("{}/users".format(cwd)).glob('**/*.ebcdic')
     files = [x for x in p if x.is_file()]
     for jcl_file in sorted(files):
-        print("*** Submitting {}".format(jcl_file))
+        print("[AUTOMATION] Submitting {}".format(jcl_file))
 
         with open(jcl_file,"rb") as jcl:
             build.submit(jcl.read(),port=3506,ebcdic=True)
