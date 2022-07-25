@@ -114,14 +114,9 @@ docker run -d \
 | DC21     | DC21     | DEFCON Workshop User                         |
 | DC22     | DC22     | DEFCON Workshop User                         |
 | DC23     | DC23     | DEFCON Workshop User                         |
-| DC24     | DC24     | DEFCON Workshop User                         |
-| DC25     | DC25     | DEFCON Workshop User                         |
-| DC26     | DC26     | DEFCON Workshop User                         |
-| DC27     | DC27     | DEFCON Workshop User                         |
-| DC28     | DC28     | DEFCON Workshop User                         |
-| DC29     | DC29     | DEFCON Workshop User                         |
 
-
+:warning: With the current setup the maximum number of concurrent users is 24. If a 25th user logs on you get 
+the following error message `IKT00203I ADDRESS SPACE CREATION FAILED`.
 
 ## Building from scratch
 
