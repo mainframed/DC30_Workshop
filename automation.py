@@ -16,6 +16,9 @@ from pathlib import Path
 import argparse
 from datetime import datetime
 
+#TIMEOUT = 1800 #default timeout in second
+TIMEOUT = 60 #default timeout in second
+
 my_parser = argparse.ArgumentParser()
 # my_parser.add_argument('--xmi-files','-x',  required=True, help="xmi file(s) to be included", nargs="+")
 # my_parser.add_argument('--task-files', '-t', required=True, help="JCL file(s) to be included", nargs="+")
@@ -254,7 +257,7 @@ class herc_automation:
         time_started = time.time()
 
         if not timeout:
-            timeout = 1800
+            timeout = TIMEOUT
 
         if not timeout and self.timeout:
             timeout=self.timeout
@@ -263,13 +266,8 @@ class herc_automation:
 
         while True:
             if time.time() > time_started + timeout:
-                if self.substep:
-                    exception = "Step: {} Substep: {} took too long".format(self.step, self.substep)
-                    log = "Step: {} Substep: {} Timeout Exceeded {} seconds".format(self.step, self.substep, timeout)
-                else:
-                    exception = "Step: {} Timeout".format(self.step, self.substep)
-                    log = "Step: {} Timeout Exceeded {} seconds".format(self.step, self.substep, timeout)
-                print(log)
+                exception = "Waiting for '{}' timed out after {} seconds".format(string_to_waitfor, timeout)
+                print("[AUTOMATION] {}".format(exception))
                 raise Exception(exception)
 
             try:

@@ -83,9 +83,6 @@ echo "[*] Starting encrypted FTP listener on port 3221"
 echo "[*] Starting encrypted TN3270 listener on port 3223"
 ( socat openssl-listen:3223,cert=/certs/3270.pem,verify=0,reuseaddr,fork tcp4:127.0.0.1:3270 ) &
 
-echo "[*] Starting Unencrypted TN3270 listener on port 21021"
-socat -v TCP4-LISTEN:21021,reuseaddr,fork tcp4:127.0.0.1:2121 &
-
 echo "[*] Launching web3270"
 cd /web3270
 python3 -u /web3270/server.py --config /config --certs /certs &

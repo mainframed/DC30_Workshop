@@ -23,6 +23,7 @@ RUN git clone --depth 1 https://github.com/jake-mainframe/ARBAUTH
 RUN ./upload.py motd.txt
 RUN ./usersjcl.py
 RUN for i in users/*.jcl; do rdrprep $i; mv reader.jcl $i.ebcdic; ls $i.ebcdic; done
+COPY extra/FTPD.MVP /MVSCE/MVP/packages/FTPD
 # Submit the JCL to MVS/CE
 RUN python3 -u automation.py --mvsce /MVSCE --initial
 RUN python3 -u automation.py --mvsce /MVSCE --ftp
@@ -48,7 +49,7 @@ RUN sed -i "s/0400.8/0400.32/g" /MVSCE/conf/local.cnf
 COPY mvs.sh /
 RUN chmod +x /mvs.sh
 VOLUME ["/config","/dasd","/printers","/punchcards","/logs", "/certs"]
-EXPOSE 3221 3223 3270 3505 3506 8888 8443 21021
+EXPOSE 3221 3223 3270 3505 3506 8888 8443 21021 
 ENTRYPOINT ["./mvs.sh"]
 
 

@@ -8,6 +8,7 @@
 
 import sys
 import math
+from pathlib import Path
 
 # Takes in a CLIST and splits the text on each line
 
@@ -83,6 +84,7 @@ FREE  F(ISPPROF,REVPROF)
 ><
 //*
 //* Replace COMMND00 with custom
+//* Replace FTPD PARMLIB
 //*
 //NEWCOMND EXEC PGM=IEBUPDTE,PARM=NEW
 //SYSUT2   DD  DSN=SYS1.PARMLIB,DISP=OLD
@@ -94,7 +96,19 @@ COM='SEND 'AUTO COMMANDS IN COMMND00 BEING PROCESSED',CN=01'
 COM='START JES2,,,PARM='WARM,NOREQ''                        
 COM='START SETPFKEY,M=00'                                   
 COM='START FTPDDC30'                                          
-COM='START NET'                                             
+COM='START NET' 
+./ ADD NAME=FTPDPM00,LIST=ALL
+SRVPORT=2121
+SRVIP=ANY
+PASVADR=127,0,0,1
+PASVPORTS=31337-32337
+INSECURE=1
+AUTHUSER=IBMUSER
+MVSRES,3350         SYSTEM RESIDENCE (PRIVATE)
+MVS000,3350         SYSTEM DATASETS (PRIVATE)
+PUB000,3380         PUBLIC DATASETS (PRIVATE)
+PUB001,3390         PUBLIC DATASETS (PRIVATE)
+SYSCPK,3350         COMPILER/TOOLS (PRIVATE)                                            
 ./ ENDUP                                     
 '''
 
@@ -109,10 +123,21 @@ sources = '''//*
 $$
 '''
 
+execs = '''//*
+//* Adds REXX scripts to DEFCON.EXEC
+//*
+//REXXEXEC  EXEC PGM=IEBUPDTE,REGION=1024K,PARM=NEW
+//SYSPRINT  DD SYSOUT=*
+//SYSUT2    DD DSN=DEFCON.EXEC,DISP=SHR
+//SYSIN     DD DATA,DLM=$$
+{execs}
+$$
+'''
+
 easteregg = '''//*
 //* Adds Easter Eggs
 //*
-//SOURCES   EXEC PGM=IEBUPDTE,REGION=1024K,PARM=NEW
+//EASTER    EXEC PGM=IEBUPDTE,REGION=1024K,PARM=NEW
 //SYSPRINT  DD SYSOUT=*
 //SYSUT2    DD DSN=WHITE.RABBIT,DISP=SHR
 //SYSIN     DD DATA,DLM=$$
@@ -164,6 +189,9 @@ create_pds = '''//*
 //SOURCE   DD  DSN=DEFCON.SOURCE,DISP=(NEW,CATLG),
 //             UNIT=SYSDA,VOL=SER=PUB000,
 //             SPACE=(TRK,(3,3,3),RLSE),DCB=SYS1.MACLIB
+//EXEC     DD  DSN=DEFCON.EXEC,DISP=(NEW,CATLG),
+//             UNIT=SYSDA,VOL=SER=PUB000,
+//             SPACE=(TRK,(3,3,3),RLSE),DCB=SYS2.EXEC
 //WHTERABT DD  DSN=WHITE.RABBIT,DISP=(NEW,CATLG),
 //             UNIT=SYSDA,VOL=SER=PUB000,
 //             SPACE=(TRK,(3,3,3),RLSE),DCB=SYS1.MACLIB
@@ -195,6 +223,20 @@ jcl += sources.format(sources=hellosrc+arbauthsrc+hint)
 with open("matrix.txt", "r") as infile:
     jcl += easteregg.format( sources = "./ ADD NAME=SCRIPT,LIST=ALL\n{}".format( infile.read() ) )
 
+print("*** Adding REXX execs ")
+
+p = Path("rexx/").glob('**/*')
+files = [x for x in p if x.is_file()]
+
+rx = ''
+for rexx_script in sorted(files):
+    with open(rexx_script,"r") as rexx:
+       rx += execs.format( 
+        execs="./ ADD NAME={},LIST=ALL\n".format(rexx_script.stem.split('.')[0].upper()) + 
+        rexx.read().rstrip() 
+        )
+
+jcl += rx
 
 add_rakf_profiles = '''//*
 //* ADD RAKF PROFILES
@@ -225,11 +267,11 @@ add_rakf_profiles = '''//*
 //RAKFUPDT EXEC RAKFUSER
 '''
 
-print("*** Adding DC00 - DC30 RAKF users ")
+print("*** Adding DC00 - DC30 RAKF")
 
 rakf_users = ''
 for x in range(0,30):
-    rakf_users += ("{usern}     USER     {usern}     N\n".format(usern="DC{}".format(str(x).zfill(2))))
+    rakf_users += ("{usern}     USERS    {usern}     N\n".format(usern="DC{}".format(str(x).zfill(2))))
 jcl += add_rakf_profiles.format(users=rakf_users[:-1])
 
 jcl += replace_ispf_clist
