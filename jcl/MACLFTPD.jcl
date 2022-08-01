@@ -31,6 +31,8 @@
 //SORTIN DD DSN=SYS1.SECURE.CNTL(PROFILES),DISP=SHR
 //       DD DATA,DLM=@@
 FACILITYFTPAUTH                                     USERS   READ
+DATASET DEFCON.*                                            READ
+DATASET WHITE.RABBIT                                        NONE
 @@
 //*
 //* Update the RAKF database
