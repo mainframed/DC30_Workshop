@@ -209,7 +209,7 @@ TESTRUN
 //OPENTST   EXEC PGM=OPENTST              
 //SYSPRINT DD   SYSOUT=*                  
 //STEPLIB  DD   DISP=SHR,DSN=SYSC.LINKLIB 
-//SYSUDUMP DD   DD DISP=SHR,DSN={usern}.DUMP003                  
+//SYSUDUMP DD   DISP=SHR,DSN={usern}.DUMP003                  
 //INPUTDD  DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(DEBRUJIN)
 ./ ADD NAME=LAB08,LIST=ALL
 //{usern}LAB8   JOB (TSO),                                     
@@ -217,7 +217,7 @@ TESTRUN
 //             CLASS=A,                                    
 //             MSGCLASS=H,                                 
 //             MSGLEVEL=(2,1),                             
-//             REGION=0K,,                 
+//             REGION=0K,                 
 //             NOTIFY=&SYSUID                                     
 //ASMLKD1 EXEC ASMFCL,                                     
 //             PARM.ASM='OBJECT,NODECK,TERM,XREF(SHORT)',  
@@ -281,7 +281,7 @@ EYE1     DC    XL4'CAFEBABE'
 //SYSPRINT DD   SYSOUT=A                 
 //STEPLIB  DD   DISP=SHR,DSN=SYS2.LINKLIB
 //         DD   DISP=SHR,DSN=SYSC.LINKLIB
-//SYSUDUMP DD   DD DISP=SHR,DSN={usern}.DUMP004    
+//SYSUDUMP DD   DISP=SHR,DSN={usern}.DUMP004    
 //INPUTDD  DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(SHELCODE)   
 ./ ADD NAME=LAB11,LIST=ALL
 //{usern}LB11   JOB (TSO),                                     
@@ -289,7 +289,8 @@ EYE1     DC    XL4'CAFEBABE'
 //             CLASS=A,                                    
 //             MSGCLASS=H,                                 
 //             MSGLEVEL=(2,1),                             
-//             REGION=0K                                   
+//             REGION=0K,                 
+//             NOTIFY=&SYSUID                                    
 //ASMLKD1 EXEC ASMFCL,                                     
 //             PARM.ASM='OBJECT,NODECK,TERM,XREF(SHORT)',  
 //             PARM.LKED='LET,MAP,XREF,LIST,TEST'          
@@ -355,8 +356,8 @@ EYE1     DC    XL4'CAFEBABE'
 //SYSPRINT DD   SYSOUT=*                                        
 //STEPLIB  DD   DISP=SHR,DSN=SYS2.LINKLIB                       
 //         DD   DISP=SHR,DSN=SYSC.LINKLIB                       
-//SYSUDUMP DD   DD DISP=SHR,DSN={usern}.DUMP004                                        
-//INPUTDD  DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(SHELCODE)    
+//SYSUDUMP DD   DISP=SHR,DSN={usern}.DUMP004                                        
+//INPUTDD  DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(PRIVESC)    
 //STEP01 EXEC PGM=IEBGENER,COND=EVEN                            
 //SYSPRINT DD SYSOUT=*                                          
 //SYSIN    DD DUMMY                                             
