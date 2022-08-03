@@ -31,25 +31,24 @@ RUN python3 -u automation.py --mvsce /MVSCE --users
 
 # Final Build
 FROM mainframed767/mvsce:latest
-RUN unset LD_LIBRARY_PATH && apt-get update && apt-get install -yq python3-pip c3270
-# Install web3270
-RUN git clone --depth 1 https://github.com/MVS-sysgen/web3270.git
-WORKDIR /web3270
-RUN pip install --no-cache-dir --upgrade pip && \
+COPY --from=MVSCE_builder /MVSCE /MVSCE
+COPY mvs.sh /
+RUN unset LD_LIBRARY_PATH && apt-get update && apt-get install -yq python3-pip c3270 &&\
+    git clone --depth 1 https://github.com/MVS-sysgen/web3270.git &&\
+    cd web3270 &&\
+    pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     openssl req -x509 -nodes -days 365 \
     -subj  "/C=CA/ST=QC/O=web3270 Inc/CN=3270.web" \
     -newkey rsa:2048 -keyout ca.key \
-    -out ca.csr
+    -out ca.csr &&\
+    cd / &&\
+    sed -i "s/0400.8/0400.32/g" /MVSCE/conf/local.cnf &&\
+    chmod +x /mvs.sh
 ADD web3270.ini /web3270/
 WORKDIR /
-# Copy the built LPAR 
-COPY --from=MVSCE_builder /MVSCE /MVSCE
-RUN sed -i "s/0400.8/0400.32/g" /MVSCE/conf/local.cnf
-COPY mvs.sh /
-RUN chmod +x /mvs.sh
 VOLUME ["/config","/dasd","/printers","/punchcards","/logs", "/certs"]
-EXPOSE 3221 3223 3270 3505 3506 8888 8443 21021 
+EXPOSE 3221 3223 3270 3505 3506 8888 8443 2121 2323 
 ENTRYPOINT ["./mvs.sh"]
 
 

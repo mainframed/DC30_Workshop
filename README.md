@@ -18,13 +18,13 @@ you will lose any and all changes you made to the mainframe environment.
 ```bash
 docker run -d \
   --name=defcon30 \
-  -p 21021:2121 \
+  -p 2121:2121 \
   -p 8443:8443 \
   -p 8080:8080 \
   -p 2323:3223 \
-  -p 31337-32337:31337-32337 \
+  -p 31337-31347:31337-31347 \
   --restart unless-stopped \
-  mainframed767/defcon30:prerelease
+  mainframed767/defcon30:latest
 ```
 
 | Port         | Description                                                                       |
@@ -54,7 +54,7 @@ docker run -d \
   -p 2121:2121 \
   -p 8443:8443 \
   -p 8080:8080 \
-  -p 31337-32337:31337-32337 \
+  -p 31337-31347:31337-31347 \
   -v $(pwd)/docker/config:/config \
   -v $(pwd)/docker/printers:/printers \
   -v $(pwd)/docker/punchcards:/punchcards \
@@ -62,7 +62,7 @@ docker run -d \
   -v $(pwd)/docker/dasd:/dasd \
   -v $(pwd)/docker/certs:/certs \
   --restart unless-stopped \
-  mainframed767/defcon30:prerelease
+  mainframed767/defcon30:latest
 ```
 
 **Ports**

@@ -101,14 +101,10 @@ COM='START NET'
 SRVPORT=2121
 SRVIP=ANY
 PASVADR=127,0,0,1
-PASVPORTS=31337-32337
+PASVPORTS=31337-31347
 INSECURE=1
 AUTHUSER=IBMUSER
-MVSRES,3350         SYSTEM RESIDENCE (PRIVATE)
-MVS000,3350         SYSTEM DATASETS (PRIVATE)
-PUB000,3380         PUBLIC DATASETS (PRIVATE)
-PUB001,3390         PUBLIC DATASETS (PRIVATE)
-SYSCPK,3350         COMPILER/TOOLS (PRIVATE)                                            
+PUB000,3380         PUBLIC DATASETS (PRIVATE)                                      
 ./ ENDUP                                     
 '''
 
@@ -195,6 +191,10 @@ create_pds = '''//*
 //WHTERABT DD  DSN=WHITE.RABBIT,DISP=(NEW,CATLG),
 //             UNIT=SYSDA,VOL=SER=PUB000,
 //             SPACE=(TRK,(3,3,3),RLSE),DCB=SYS1.MACLIB
+//FTPDDUMP DD  DSN=DEFCON.FTPDDUMP,DISP=(NEW,CATLG),    
+//             UNIT=SYSDA,VOL=SER=PUB000,                          
+//             SPACE=(TRK,(10,5),RLSE),                              
+//             DCB=(DSORG=PS,RECFM=FB,LRECL=121,BLKSIZE=400)
 '''
 
 
