@@ -91,7 +91,7 @@ echo "[*] Starting encrypted TN3270 listener on port 3223"
 ( socat openssl-listen:3223,cert=/certs/3270.pem,verify=0,reuseaddr,fork tcp4:127.0.0.1:3270 ) &
 
 echo "[*] Starting Wiki"
-/usr/local/bin/start_tiddlywiki
+/usr/local/bin/start_tiddlywiki &
 
 echo "[*] Launching web3270"
 cd /web3270
