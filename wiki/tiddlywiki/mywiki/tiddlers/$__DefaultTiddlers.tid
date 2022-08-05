@@ -1,9 +1,10 @@
 created: 20220731225500219
-modified: 20220804225945534
+modified: 20220805061145182
 title: $:/DefaultTiddlers
 type: text/vnd.tiddlywiki
 
 [[Welcome DEF CON 30!]]
+[[Getting Started]]
 [[Lab 1 - Run HELLO]]
 [[Lab 2 - First Overflow]]
 [[Lab 3 - Find our return address]]
@@ -19,3 +20,4 @@ type: text/vnd.tiddlywiki
 [[Lab 13 - Not So Fast There]]
 [[Lab 14 - Sockets and EBCDIC]]
 [[Lab 15 - RCE]]
+[[ASCII/EBCDIC Table]]

@@ -1,5 +1,5 @@
 created: 20220801234259555
-modified: 20220804225413523
+modified: 20220805170656775
 tags: 
 title: Lab 11 - 2 Crash 2 Furious
 type: text/vnd.tiddlywiki
@@ -28,10 +28,11 @@ type: text/vnd.tiddlywiki
 
 # Copy the dump to `~/dump.txt` again: `cp ~/dumps/prt00e.txt ~/dump.txt`
 # Open the file in your editor of choice: `kate ~/dump.txt`
+#* ⚠️ This file contains the previous dump as well as the current one. ⚠️ 
 # Search for `PSW AT ENTRY TO ABEND  078D1000 00095CCC` and take note of the address `00095CCC`
 #* we need this address but since the addresses start at 0 we'll search for `095CC0`
 # Search for `0CD940`. This should give you a line similar to `095CC0   14414780 F0380640 4440F04C 41242001`
-#  8 bytes in is this instruction: `41242001`
+#  `C` bytes in is this instruction: `41242001`
 # Use DECODEI to decode the instruction from machine code to readable in your linux terminal: `rexx ~/labs/DECODEI.rexx 41242001`
 #* The output from decoding is: `LA R2,1(R4,R2)`
 #* STM is store multiple: http://www.simotime.com/asmins01.htm#LA this means that the machine is going to load the address at  (R2 + R4) in to R2

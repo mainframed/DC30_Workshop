@@ -1,5 +1,5 @@
 created: 20220804053052613
-modified: 20220804225416151
+modified: 20220805172321148
 tags: 
 title: Lab 12 - Hackers Returns
 type: text/vnd.tiddlywiki
@@ -18,6 +18,10 @@ In the previous lab we caused a crash at memory location `00095CCC` lets look at
 ```
 !! Finding our Return
 
+# Copy the dump to `~/dump.txt` again: `cp ~/dumps/prt00e.txt ~/dump.txt`
+# Open the file in your editor of choice: `kate ~/dump.txt`
+#* ⚠️ This file contains the previous dump as well as the current one. ⚠️ 
+#* To find our current job we look for `STC  111  FTPDDC30`
 # Search the dump file for `REGS AT TIME OF ERROR` and notice that R13 is set to `F5C288F6`. (`5Bh6`) so we replace that with yet another location in memory.
 # Open pattern3 in you hex editor: `okteta pattern3`
 # Search for `5Bh6` and replace it with `8013203C`
@@ -26,11 +30,12 @@ In the previous lab we caused a crash at memory location `00095CCC` lets look at
 !! Restarting the FTPD server
 
 # On the Command line in http://localhost:8888 (Username/password: `defcon`) type `/start ftpddc30,srvport=2124`
-# Submit your edited second buffer: `cat pattern4|ncat -v -w1 localhost 2124`
+# Submit your edited buffer: `cat pattern4|ncat -v -w1 localhost 2124`
 # Notice in the hercules console at http://localhost:8888/ the message `/ IEF450I FTPDDC30 FTPDDC30 - ABEND S0C6 U0000` means we've crashed FTPD
 # Congrats you crashed it, again! 
 # Copy the dump to `~/dump.txt` again: `cp ~/dumps/prt00e.txt ~/dump.txt`
 # Open the file in your editor of choice: `kate ~/dump.txt` ''Note'': Kate will let you reload the file, no need to keep opening new editors.
+# Make sure you're looking at the right dump, search for `STC  112  FTPDDC30`
 # Search for `SA   13404C` (which in ASCII is `13203C`)
 #* This is where the OS thinks our save area was supposed to be in memory
 #* Notice that the address MVS wants to return to, is `RET F8C183F9` (`8Ac9`)

@@ -1,5 +1,5 @@
 created: 20220731215614196
-modified: 20220801071843682
+modified: 20220805070618632
 tags: 
 title: Lab 5 - OPENTST
 type: text/vnd.tiddlywiki
@@ -8,12 +8,55 @@ Open test is a simple ASM program assembled, linked and placed in `SYSC.LINKLIB(
 
 [img[Screenshot_2022-07-31_14-59-18.png]]
 
+Here's the source from https://github.com/jake-mainframe/ARBAUTH/blob/master/arbauth.jcl
+
+```
+OPENTST  CSECT
+***********************************************************************
+*    INITIALIZATION
+***********************************************************************
+         BALR  R12,0
+         USING *,R12
+         STM   R14,R12,SAVE
+         OPEN (INDCB,(INPUT))
+***********************************************************************
+*    MAINSTREAM OF PROGRAM
+***********************************************************************
+         GET INDCB,INAREA
+SAYHI    LA  R1,MSGHI
+         SVC 35
+***********************************************************************
+*    END OF PROGRAM
+***********************************************************************
+ENDPROG  LM    R14,R12,SAVE
+         XR    R15,R15
+         BR    R14
+***********************************************************************
+*    DATA
+***********************************************************************
+MSGHI    DC    XL4'00570000'
+         DC    CL3'HI '
+INAREA   DS    CL80
+SAVE     DS    18F
+***********************************************************************
+*    DATASETS
+***********************************************************************
+INDCB   DCB DSORG=PS,MACRF=(GM),DDNAME=INPUTDD,                        X
+               RECFM=FB,EODAD=SAYHI
+***********************************************************************
+*    MACROS
+***********************************************************************
+         YREGS
+         END   OPENTST CSECT
+```
+
+The overflow here is cause because the `INAREA` is only 80 bytes in size and the save area immediately follows. What happens if we pass it a dataset that is longer than 80 bytes? Its only possible because the INDCB macro call is being used insecurely.
+
 !! Run OPENTST 
 
 By this point you should know how to edit and submit JCL. This lab only has one step:
 
 # Edit `<username>.JCLLIB(LAB05)` replacing `<CHANGE TO YOUR USERNAME>` with your username, or really any text of your choice.
 
-If you look at the joblog you can see `+HI NEO `
-
-[img[Screenshot_2022-07-31_15-01-47.png]]
+If you look at the joblog you can see `+HI NEO... `
+[img[neowhiterabbit.png]]

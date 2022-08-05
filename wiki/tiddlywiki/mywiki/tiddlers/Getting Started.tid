@@ -1,33 +1,49 @@
 created: 20220724190305762
-modified: 20220803150932492
+modified: 20220805061237307
 tags: 
 title: Getting Started
 type: text/vnd.tiddlywiki
 
-Welcome to the Mainframe Buffer Overflow workshop. The contents of this wiki will walk you through the various labs. If you have questions please feel free to ask. 
-
 !! Labs Docker Container
 
-It is strongly recommended you run these labs yourself in Docker. The command below will deploy the container for you:
+If you're not in the DEF CON 30 workshop you will have to run these labs yourself in Docker. The command below will deploy the container for you:
 
 This is a minimal container, with the least amount of ports/volumes. This is all you'll need for the class.
 
 ```
 docker run -d \
   --name=defcon30 \
-  -p 21021:2121 \
-  -p 3270:3270 \
+  -e HUSER=defcon \
+  -e HPASS=defcon \
+  -p 2323:3223 \
+  -p 8888:8888 \
+  -p 2121-2141:2121-2141 \
   -p 8443:8443 \
   -p 8080:8080 \
+  -p 31337-31347:31337-31347 \
+  -v ~/dumps:/printers \
   --restart unless-stopped \
-  mainframed767/defcon30
+  mainframed767/defcon30:prerelease
 ```
+
+Ports explained:
+
+* 2323: 3270 server port
+* 8443: Web based tn3270 client, the secret is `D3FC0N`
+* 8888: Hercules console web server. Username/password: `defcon`
+* 8080: This wiki
+* 2121-2141 & 31337-31347: Range of web ports for FTP server
 
 For more information about the container see https://github.com/mainframed/DC30_Workshop
 
+!! Notes
+
+* If you want to keep a copy of this wiki locally you can click the ''Export'' button to save a copy locally (its next to the home button)
+* If you accidentally close a page, clicking the home page will bring them all back
+
 !! Logging On
 
-Either connect to web3270 at https://hostname:8443 or with your own 3270 client (x3270, c3270 and pw3270 are all great open source clients). If using your own client the TN3270 server port is ''3270''
+Either connect to web3270 at https://localhost:8443 or https://dc30.soldieroffortran.org:8443, the secret is `D3FC0N`, or with your own 3270 client (x3270, c3270 and pw3270 are all great open source clients). If using your own client the TN3270 server port is ''2323'': `x3270 -noverifycert L:localhost:2323`
 
 If you encounter a screen like this:
 
@@ -41,7 +57,7 @@ Afterwards you should see
 
 [img[Screenshot_2022-07-24_12-41-23.png]]
 
-To log on enter your username, which is in the range `DC00` through `DC29`. The password is the same as the username. If you would like to change your password. After logging in you type: `LOGON username/current password/new password`. For example if I was using `DC23` I would type `LOGON DC23/DC23/D3FC0N22`
+To log on enter your username, which is in the range `DC00` through `DC22`. The password is the same as the username. If you would like to change your password. After logging in you type: `LOGON username/current password/new password`. For example if I was using `DC23` I would type `LOGON DC23/DC23/D3FC0N22`
 
 Once logged on you'll be at the TSO ready prompt and are good to go. 
 

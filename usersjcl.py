@@ -399,8 +399,8 @@ EYE4     DC    XL4'CAFEBABE'
 COPY     LA    R1,MSGWTO
          SVC   35
          SVC   03
-MSGWTO   DC    XL4'00070000'
-         DC    C'WTO'
+MSGWTO   DC    XL4'000C0000'
+         DC    C'RINGRING'  
 EYE1     DC    XL4'CAFEBABE'
          YREGS
          END  
@@ -449,13 +449,13 @@ COPY     XC    WTOJOBX,XORKEY
 * DC    XL4'00070000'
 * DC    C'WTO'
 *
-WTOJOBX  DS    0XL16
-         DC    X'<THE XORED BYTES>'
-*
-* XOR KEY
-*
-XORKEY   DS    0XL16
-         DC    XL16'9999999999D499D499D4999999999916'
+WTOJOBX  DS    0XL21                        
+         DC    X'<PUT XORED SHELLCODE HERE>'
+*                                           
+* XOR KEY                                   
+*                                           
+XORKEY   DS    0XL21                        
+         DC    X'<PUT XOR KEY HERE>'        
 EYE1     DC    XL4'CAFEBABE'
          YREGS
          END

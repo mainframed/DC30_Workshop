@@ -1,21 +1,24 @@
 created: 20220731222605570
-modified: 20220801071843739
+modified: 20220805071536414
 tags: 
 title: Lab 7 - De Brujin Overflow
 type: text/vnd.tiddlywiki
 
-OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a file with 1,000 characters in a de Brujin pattern. Instead of sending Opentst our username, we send it that pattern. That's what the line `//INPUTDD  DD   DISP=SHR,DSN=DC00.OVERFLOW.ARBAUTH(DEBRUJIN)` is doing.
+OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a file with 1,000 characters in a de Brujin pattern. Instead of sending Opentst our username, we send it that pattern. That's what the line `//INPUTDD  DD   DISP=SHR,DSN=DC00.OVERFLOW.ARBAUTH(DEBRUJIN)` in `<username>.JCLLIB(LAB07)` doing.
 
-# Edit `<username>.JCLLIB(LAB07)` and submit it
+# Open and SUBMIT `<username>.JCLLIB(LAB07)`
 # Notice the output from it is `ABENDED  SYSTEM 0C6` ''BONUS'' Who can tell me what S0C6 means?
 # Its crashlog will be placed in `<username>.DUMP003` edit that file
 # Search for `REGS AT TIME OF ERROR`: in ISPF `F "REGS AT TIME OF ERROR"`
 # Hit `F11` to scroll right, and notice that Register 14 (E) is set to `F8C183F9` (or similar)
 
+
 ```
+
 +3C     REGS AT TIME OF ERROR    84F1C184 F2C184F3 C184F4C1 84F5C184 F6C184F7 C184F8C1 84F9C184 F0C185F1    (0-7)
 +5C                              C185F2C1 85F3C185 F4C185F5 C185F6C1 85F7C185 00094FB0 F8C183F9 00000000    (8-F)
 +7C     EC PSW AT TIME OF ERROR  078D0000 00C183FB 00020006 009B5800
+
 ```
 
 # Edit `<username>.OVERFLOW.ARBAUTH(DEBRUJIN)` and turn the hex editor on with `HEX ON`. 

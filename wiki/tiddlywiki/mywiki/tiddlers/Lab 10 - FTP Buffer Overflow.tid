@@ -1,5 +1,5 @@
 created: 20220801161821424
-modified: 20220804053305230
+modified: 20220805164759119
 tags: 
 title: Lab 10 - FTP Buffer Overflow
 type: text/vnd.tiddlywiki
@@ -51,10 +51,13 @@ docker run -d \
 
 !! Create ASCII de Brujin
 
-# Using FTP download both rexx scripts in `<username>.EXEC`: `cd <username>.exec` then `get DEBRUJIN DEBRUJIN.rexx` and `get DECODEI DECODEI.rexx` and exit FTP 
+# Using FTP download both rexx scripts in `<username>.EXEC`: 
+#* `cd <username>.exec` 
+#* `get DEBRUJIN DEBRUJIN.rexx` 
+#* `get DECODEI DECODEI.rexx` and exit FTP 
 #* this is already done for you on the workshop vm in the folder `~/labs`. 
-# In a linux terminal generate a de Brujin pattern with `rexx DEBRUJIN.rexx 1500`
-# Copy it to your copy/paste buffer: `rexx DEBRUJIN.rexx 1500 |  xsel --clipboard --input`
+# In a linux terminal generate a de Brujin pattern with `rexx ~/labs/DEBRUJIN.rexx 1500`
+# Copy it to your copy/paste buffer: `rexx ~/labs/DEBRUJIN.rexx 1500 |  xsel --clipboard --input`
 
 !! Overflow
 
@@ -64,6 +67,8 @@ Before we get started make sure you've got the hercules console open at http://l
 # Once connected type `USER <PASTE DEBRUJIN PATTERN>`
 # You will get no response cause you've crashed the FTP server
 # Notice in the hercules console at http://localhost:8888/ the message `/ IEF450I FTPDDC30 FTPDDC30 - ABEND S0C4 U0000` means we've crashed FTPD
+#* The console doesn't autoupdate, so you'll need to click on `Auto Refresh` to see these updates. Turn it off again when done.
+# You can exit ncat with ctrl-c
 
 !! Tracing the Dump (heh)
 
@@ -78,14 +83,17 @@ Before we get started make sure you've got the hercules console open at http://l
 #* The output from decoding is: `STM R12,R14,0(R2)`
 #* STM is store multiple: http://www.simotime.com/asmins01.htm#STM this means that the machine is using `R2` as the base register
 # Search the file for `REGS AT TIME OF ERROR` and notice that R2 is set to `C288F7C2`. 
-#* We can use http://www.longpelaexpertise.com/toolsCode.php to figure out what that is in ASCII: ` Bh7B`
+#* We can use http://www.longpelaexpertise.com/toolsCode.php to figure out what that is in ASCII: `Bh7B`
 #* `C288F7C2` is way outside of addressable memory, we need to change that to be somewhere in memory our program can read/write.
-#* Here's our challenge, we cant just use any hex, the code gets translated from ASCII to EBCDIC. So we have to find bytes that will translate to the bytes we need.
+#* Here's our challenge, we cant just use any hex, whatever we send to the FTP socket gets translated from ASCII to EBCDIC. So we have to find ASCII bytes that will translate to the EBCDIC bytes we need.
 #* Using http://www.simotime.com/asc2ebc1.htm we can find those bytes
 # Find a location in memory we can use
-#* Search `~/dump/prt00e.txt` for `IBMUSER.CLIST` and take note of the memory address on the far left: `12C000`: The `12` and the `C0` are easy but we can't have a `00` because that a NULL byte. So we can replace that will 12. 
-#* `C0` is `{` in EBCDIC,  which is `7B` in ASCII
-#* So now we need to create a buffer and replace `Bh7B` with `127B12`, which when sent to FTP will be translated to `12C012`
+#* Search `~/dump.txt` for `IBMUSER.CLIST` and take note of the memory address on the far left:  [img[clistaddress.png]]
+#* The address we'll use is `12C000`: 
+#** The `12` and the `C0` are easy but we can't have a `00` because that a NULL byte. So we replace that will 12. 
+#** `C0` is `{` in EBCDIC,  which is `7B` in ASCII
+# Now we need to create a buffer and replace `Bh7B` with `127B12`
+#* This, when sent to FTP, will be translated to `12C012`
 #* We need 4 bytes though, so we prepend `80` thus our final hex is `80127B12`
 #* Why `80`? 00 Is null so it wouldn't work, and we need something that translates.
 

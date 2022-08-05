@@ -1,15 +1,15 @@
 created: 20220731220224535
-modified: 20220801071843702
+modified: 20220805071314556
 tags: 
 title: Lab 6 - De Brujin
 type: text/vnd.tiddlywiki
 
 Using REXX generate a de Brujin pattern. This REXX script is courtesy of Davide Girardi and available here: https://gist.github.com/davidegirardi/61385ae404f4306349167ac1483b40b9#file-brujin-rex
 
-# Exit ISPF (hit `F3` until you're at the READY prompt or `=x` on the command line) and run `RX DEBRUJIN 20`. This rexx script is stored in `<username>.EXEC(DEBRUJIN)`. 
+# Exit ISPF (hit `F3` until you're at the READY prompt or you can exit ISPF by putting `=x` on the command line) and run `RX DEBRUJIN 20`. This rexx script is stored in `<username>.EXEC(DEBRUJIN)`.  [img[debrujinrexx.png]]
 # Open up ISPF again and edit `<username>.JCLLIB(LAB06)`. 
 # Notice that all this JCL is doing is running the DEBRUJIN script and generating 1000 characters.
 # Submit this job to place those 1000 characters in `DC00.OVERFLOW.ARBAUTH(DEBRUJIN)`
 # The job should return with `MAX COND CODE 0000`
 
-[img[Screenshot_2022-07-31_15-25-34.png]]
+[img[LAB6.png]]

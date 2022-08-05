@@ -1,13 +1,17 @@
 created: 20220731183824487
-modified: 20220801071843575
+modified: 20220805065443779
 tags: 
 title: Lab 2 - First Overflow
 type: text/vnd.tiddlywiki
 
 Lets take a look at the first buffer overflow
 
-* In ISPF edit the file `<username>.OVERFLOW(LGBT400)`
-* On the `Command ===>` line type `HEX ON`
+# In ISPF edit the file `<username>.OVERFLOW(LGBT400)`
+#* In the `Command ===>` line type `=3.4`
+#* Then fill in `Data set name prefix ==>` with your username [img[dataset user.png]]
+#* Tab or arrow key until your cursor is in front of `<username>.OVERFLOW` and put `V` [img[putv.png]]
+#* then put a `V` again in front of `LGBT400` and hit enter
+# On the `Command ===>` line type `HEX ON`
 
 This enables the hex editor:
 [img[Screenshot_2022-07-31_11-40-25.png]]
@@ -18,13 +22,22 @@ Pressing `F11` to scroll to the right you'll notice this line is 400 columns wid
 
 !! Overflowing the HELLO buffer
 
-# Edit `<username>.JCLLIB(LAB02)`. To turn off the hex editor type `HEX OFF` and hit enter. Notice that `SYSUDUMP` output is set to `DC00.DUMP001`
+# Edit `<username>.JCLLIB(LAB02)` (Hit `F3` twice, then move your cursor to `<username>.JCLLIB`, but `E` then put another `E` in front of `LAB02`. This is the last time i'm reminding you how to open a file. )
+#* To turn off the hex editor type `HEX OFF` and hit enter. 
+#* Notice that `SYSUDUMP` output is set to `DC00.DUMP001`
+#* Also notice our input `STDIN` is the other file we just looked at
+# After looking at the job, submit the job with `SUBMIT` in the command lin
 # This job will fail with `ABENDED  SYSTEM 0C6`
-# Edit the output from the dump in `DC00.DUMP001`
+
+!! Reviewing the Dump (heh)
+
+# When a job fails is creates a dump, we can open that file.
+# Open the output from the dump in `<username>.DUMP001` (same as before, `F3` twice then `E` in front of the dataset)
 # Search for LGBT in hex with `F D3C7C2E3` on the command line (RG means register)
 # Jump to line 4546 `L 4546`, this is memory, see all the LGBT in hex. 
 # Note down which memory address our `LGBT` starts at (this is the column after the line numbers, in hex)
+[img[lgtbmemory.png]]
+(hint its `0B40AC`)
 
-
-Image showing registry overwritten:
+Image showing register being overwritten:
 [img[Screenshot_2022-07-31_11-50-09.png]]
