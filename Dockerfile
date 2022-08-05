@@ -15,6 +15,7 @@ WORKDIR /
 RUN git clone --depth 1 https://github.com/mvslovers/rdrprep.git
 WORKDIR /rdrprep
 RUN make && make install
+# Copy compiled hello.load
 WORKDIR /builder
 ADD ./ /builder/
 COPY --from=getsploit_builder /hello.load /builder/GETSPLOIT/hello.load
@@ -28,24 +29,29 @@ COPY extra/FTPD.MVP /MVSCE/MVP/packages/FTPD
 RUN python3 -u automation.py --mvsce /MVSCE --initial
 RUN python3 -u automation.py --mvsce /MVSCE --ftp
 RUN python3 -u automation.py --mvsce /MVSCE --users
+# Install web3270 and its requirements
+WORKDIR /
+RUN git clone --depth 1 https://github.com/MVS-sysgen/web3270.git
+WORKDIR /web3270
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir --user -r requirements.txt 
+
 
 # Final Build
 FROM mainframed767/mvsce:latest
 COPY --from=MVSCE_builder /MVSCE /MVSCE
-COPY mvs.sh /
-RUN unset LD_LIBRARY_PATH && apt-get update && apt-get install -yq python3-pip c3270 &&\
-    git clone --depth 1 https://github.com/MVS-sysgen/web3270.git &&\
-    cd web3270 &&\
-    pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    openssl req -x509 -nodes -days 365 \
-    -subj  "/C=CA/ST=QC/O=web3270 Inc/CN=3270.web" \
-    -newkey rsa:2048 -keyout ca.key \
-    -out ca.csr &&\
-    cd / &&\
-    sed -i "s/0400.8/0400.32/g" /MVSCE/conf/local.cnf &&\
-    chmod +x /mvs.sh
+COPY --from=MVSCE_builder /root/.local /root/.local
+COPY --from=MVSCE_builder /web3270 /web3270
 ADD web3270.ini /web3270/
+ADD mvs.sh /
+RUN unset LD_LIBRARY_PATH && apt-get update && apt-get install --no-install-recommends -yq c3270 nodejs npm &&\
+    sed -i "s/0400.8/0400.32/g" /MVSCE/conf/local.cnf &&\
+    npm install -g tiddlywiki@5.2.0
+COPY wiki/users.txt /auth/users.txt
+WORKDIR /var/lib/tiddlywiki
+COPY wiki/tiddlywiki/ /var/lib/tiddlywiki/
+# Add init-and-run script
+ADD wiki/start_tiddlywiki.sh /usr/local/bin/start_tiddlywiki
 WORKDIR /
 VOLUME ["/config","/dasd","/printers","/punchcards","/logs", "/certs"]
 EXPOSE 3221 3223 3270 3505 3506 8888 8443 2121 2323 
