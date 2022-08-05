@@ -363,7 +363,105 @@ EYE1     DC    XL4'CAFEBABE'
 //SYSIN    DD DUMMY                                             
 //SYSUT1   DD DSN=WHITE.RABBIT(SCRIPT),DISP=SHR              
 //SYSUT2   DD SYSOUT=*                                          
-//SYSTSPRT DD SYSOUT=*                      
+//SYSTSPRT DD SYSOUT=*      
+./ ADD NAME=LAB13,LIST=ALL
+//{usern}LB13   JOB (TSO),                                     
+//             'COMP WTOSML',                              
+//             CLASS=A,                                    
+//             MSGCLASS=H,                                 
+//             MSGLEVEL=(2,1),                             
+//             REGION=0K,                 
+//             NOTIFY=&SYSUID                                    
+//ASMLKD1 EXEC ASMFCL,                                     
+//             PARM.ASM='OBJECT,NODECK,TERM,XREF(SHORT)',  
+//             PARM.LKED='LET,MAP,XREF,LIST,TEST'          
+//ASM.SYSLIB  DD   DSN=SYS1.MACLIB,DISP=SHR                
+//            DD   DSN=SYS2.MACLIB,DISP=SHR                
+//            DD   DSN=SYS1.AMODGEN,DISP=SHR               
+//            DD   DSN=SYS1.AMACLIB,DISP=SHR               
+//ASM.SYSTERM DD SYSOUT=*                                  
+//ASM.SYSTERM DD SYSOUT=*                                  
+//ASM.SYSIN   DD DATA,DLM=@@                                  
+WTOSML   CSECT
+*
+* PREFIX TO SIMULATE R14 RETURN
+*
+         LR    R14,R15
+         LA    R14,16(R14)
+         BC    15,6(,R14)
+         NOPR  0
+EYE4     DC    XL4'CAFEBABE'
+         USING *,R14
+*
+* WTO AND THEN EXIT
+*
+         DS    XL6
+COPY     LA    R1,MSGWTO
+         SVC   35
+         SVC   03
+MSGWTO   DC    XL4'00070000'
+         DC    C'WTO'
+EYE1     DC    XL4'CAFEBABE'
+         YREGS
+         END  
+@@               
+//LKED.SYSLMOD  DD DSN={usern}.LOAD(WTOSML),DISP=SHR  
+//LKED.SYSPRINT DD   SYSOUT=*          
+./ ADD NAME=LAB14,LIST=ALL
+//{usern}LB14   JOB (TSO),                                     
+//             'COMP WTOSML',                              
+//             CLASS=A,                                    
+//             MSGCLASS=H,                                 
+//             MSGLEVEL=(2,1),                             
+//             REGION=0K,                 
+//             NOTIFY=&SYSUID                                    
+//ASMLKD1 EXEC ASMFCL,                                     
+//             PARM.ASM='OBJECT,NODECK,TERM,XREF(SHORT)',  
+//             PARM.LKED='LET,MAP,XREF,LIST,TEST'          
+//ASM.SYSLIB  DD   DSN=SYS1.MACLIB,DISP=SHR                
+//            DD   DSN=SYS2.MACLIB,DISP=SHR                
+//            DD   DSN=SYS1.AMODGEN,DISP=SHR               
+//            DD   DSN=SYS1.AMACLIB,DISP=SHR               
+//ASM.SYSTERM DD SYSOUT=*                                  
+//ASM.SYSTERM DD SYSOUT=*                                  
+//ASM.SYSIN   DD DATA,DLM=@@                                  
+AWTOXOR  CSECT
+*
+* PREFIX TO SIMULATE R14 RETURN
+*
+         LR    R14,R15
+         LA    R14,16(R14)
+         BC    15,0(,R14)
+         NOPR  0
+EYE4     DC    XL4'CAFEBABE'
+         USING *,R14
+*
+* ENTER XOR BYTES
+*
+COPY     XC    WTOJOBX,XORKEY
+*
+* WTOSML XORED
+* USING *,R14
+* DS    XL6
+* LA    R1,MSGWTO
+* SVC   35
+* SVC   03
+* DC    XL4'00070000'
+* DC    C'WTO'
+*
+WTOJOBX  DS    0XL16
+         DC    X'<THE XORED BYTES>'
+*
+* XOR KEY
+*
+XORKEY   DS    0XL16
+         DC    XL16'9999999999D499D499D4999999999916'
+EYE1     DC    XL4'CAFEBABE'
+         YREGS
+         END
+@@               
+//LKED.SYSLMOD  DD DSN={usern}.LOAD(WTOSMLX),DISP=SHR  
+//LKED.SYSPRINT DD   SYSOUT=*                   
 ./ ADD NAME=BONUS01,LIST=ALL
 //BONUS01  JOB (TSO),
 //             'RUN FIXDSCB',
