@@ -2,17 +2,16 @@
 //             'Build Netsol',
 //             CLASS=A,
 //             MSGCLASS=A,
-//             MSGLEVEL=(1,1),
-//             USER=IBMUSER,PASSWORD=SYS1
+//             MSGLEVEL=(1,1),USER=IBMUSER,PASSWORD=SYS1
 //********************************************************************
 //*
 //* Desc: Build new NETSOL logon screen: DC30
-//* Date: 22-07-2022
+//* Date: 04-08-2022
 //* Built using Soldier of FORTRANs ANSi to EBCDiC builder
 //*
 //* Original ANSi File:   vtam_screen.ans
 //* Original ANSi Artist: Anonymous
-//* Original ANSi Date:   20220722
+//* Original ANSi Date:   20220804
 //*
 //* Command Line Args: --sysgen vtam_screen.ans --ROW 23 --COL 19 
 //*                    --member DC30 --file jcl/logon_screen.jcl 
@@ -971,10 +970,7 @@ EGMSG    DS 0C EGMSG
          DC    X'2800002842F72842F2'
          DC    7C'$'
          $SBA  (19,1)
-* (19,1) (FG) Green 
-         DC    X'2842F4'
-         $SBA  (20,1)
-* (20,1) (FG) White 
+* (19,1) (FG) White 
          DC    X'2842FE'
          DC    23C' '
          $SBA  (20,24)
@@ -1084,7 +1080,7 @@ EGMSG    DS 0C EGMSG
          $SBA  (22,2)
 * (22,2) Bold/Intense (FG) Light Green 
          DC    X'2842FC'
-         DC    C'To login type: DC## where ## is 00 to 30'
+         DC    C'To login type: DC## where ## is 00 to 22'
          $SBA  (22,42)
 * (22,42) Normal Display (FG) White 
          DC    X'2800002842F7'
@@ -1103,10 +1099,7 @@ EGMSG    DS 0C EGMSG
          DC    C'==='
          DC    X'6E'
          $SBA  (23,18)
-* (23,18) (FG) Light Green 
-         DC    X'2842FC'
-         $SBA  (24,1)
-* (24,1) Normal Display (FG) White 
+* (23,18) Normal Display (FG) White 
          DC    X'2800002842F7'
 * Insert Cursor and unprotected field
          $SBA  (23,19)
