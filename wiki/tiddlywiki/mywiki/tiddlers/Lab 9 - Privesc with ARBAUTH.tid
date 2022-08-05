@@ -1,0 +1,40 @@
+created: 20220801062422765
+modified: 20220801071843906
+tags: 
+title: Lab 9 - Privesc with ARBAUTH
+type: text/vnd.tiddlywiki
+
+If you've explored at all on the system you'll know there's a dataset called `WHITE.RABBIT`. Did you try to access it? What happens when you try to read `SCRIPT` in that dataset? If you try an edit or view that dataset you will get access denied! Bummer!
+
+[img[Screenshot_2022-07-31_23-34-15.png]]
+
+Despite OPENTST being in a APF authorized library, it wasn't linked with `AC=1` which means it still can't run authorized! But luckily with have a program in `SYS2.LINKLIB` that can help us: ''ARBAUTH''. ARBAUTH lets us provide a program to run and it will run it as AC=1. 
+
+!! Running ARBAUTH
+
+# Edit lab 9: `<username>.JCLLIB(LAB09)` and submit it
+# You should get a max return code of `0000`
+
+!! Running Opentst with ARBAUTH
+
+# Edit lab 10: `<username>.JCLLIB(LAB10)` and submit it
+# Whoa we get an even stranger CC `SYSTEM=53E`, don't worry we can ignore it
+# Look at the job log and see that our WTOR shell code ran just fine!
+
+!! Prep for Privesc
+
+# Submit the job `<username>.JCLLIB(LAB11)` this generates shell code to change a users ACEE Flag 1 to `10110001`.
+# Using FTP download the file `<username>.LOAD(ACEEJOB)`.
+# Open the both DEBRUJIN and ACEEJOB with okteta: `okteta DEBRUJIN & okteta ACEEJOB`
+# Copy all bytes between `CAFEBABE` from ACEEJOB and paste them start at the first byte in `DEBRUJIN`.
+# Save this file as `PRIVESC`
+# Upload this new file to `<username>.OVERFLOW.ARBAUTH(PRIVESC)`
+
+!! Exploit
+
+# Edit the file `<username>.JCLLIB(LAB12)`. Notice there's two steps, the ARBAUTH step `//ARBAUTH   EXEC PGM=ARBAUTH, ` and the read step `//STEP01 EXEC PGM=IEBGENER,COND=EVEN`. If you look at the JCL for `STEP01` you'll see `//SYSUT1   DD DSN=WHITE.RABBIT(SCRIPT),DISP=SHR`. This is the file that IEBGENER is going to read and output to the joblog.
+# Submit this job, it will also abend
+# Look at the job log, you should see `WRITING COMPLETE`. This means we successfully changed our ACEE!
+# Scroll down and notice you now have the contents of `WHITE.RABBIT(SCRIPT)` available to you!
+
+[img[Screenshot_2022-08-01_00-06-05.png]]

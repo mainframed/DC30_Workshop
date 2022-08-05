@@ -1,0 +1,19 @@
+created: 20220801070736633
+modified: 20220804225850205
+tags: 
+title: Welcome DEF CON 30!
+type: text/vnd.tiddlywiki
+
+[img[title.jpg]]
+
+Welcome to the DEF CON 30 Mainframe buffer overflow workshop. Below are the labs for the class. Feel free to skip ahead but we won't help you if you get stuck. 
+
+The labs below walk through a simple buffer overflow on a C program, a buffer overflow on an APF authorized program and using ARBAUTH to do privesc and a remote code execution overflow with EBCDIC to ASCII challenges. To do these labs you'll need at a minimum:
+
+* A tn3270 client. One is included with this course container at https://localhost:8443 or https://dc30.soldieroffortran.org:8443, the secret is `D3FC0N`. Other good options include x3270, c3270 or pw3270.
+* A hex editor, the class uses Okteta
+* A command line FTP client
+* Python 3
+* A web browser
+* A rexx script interpreter. Windows available here https://regina-rexx.sourceforge.io/ on Linux and MacOS you should be able to install this with your package manager of choice. e.g. `sudo apt install regina-rexx`
+* An open mind

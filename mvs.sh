@@ -67,6 +67,13 @@ if [ ! -f /certs/ftp.pem ]; then
 
 fi
 
+if [ ! -f /certs/ca.key ]; then
+    echo "[*] /certs/ca.key (for web3270) does not exist... generating"
+    openssl req -x509 -nodes -days 365 \
+    -subj  "/C=CA/ST=QC/O=web3270 Inc/CN=3270.web" \
+    -newkey rsa:2048 -keyout /certs/ca.key \
+    -out /certs/ca.csr
+fi
 
 if [ ! -f /certs/3270.pem ]; then
     echo "[*] /certs/3270.pem does not exist... generating"
@@ -82,6 +89,9 @@ echo "[*] Starting encrypted FTP listener on port 3221"
 ( socat openssl-listen:3221,cert=/certs/ftp.pem,verify=0,reuseaddr,fork tcp4:127.0.0.1:2121 ) &
 echo "[*] Starting encrypted TN3270 listener on port 3223"
 ( socat openssl-listen:3223,cert=/certs/3270.pem,verify=0,reuseaddr,fork tcp4:127.0.0.1:3270 ) &
+
+echo "[*] Starting Wiki"
+/usr/local/bin/start_tiddlywiki
 
 echo "[*] Launching web3270"
 cd /web3270

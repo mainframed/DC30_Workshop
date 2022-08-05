@@ -1,0 +1,39 @@
+created: 20220731222605570
+modified: 20220801071843739
+tags: 
+title: Lab 7 - De Brujin Overflow
+type: text/vnd.tiddlywiki
+
+OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a file with 1,000 characters in a de Brujin pattern. Instead of sending Opentst our username, we send it that pattern. That's what the line `//INPUTDD  DD   DISP=SHR,DSN=DC00.OVERFLOW.ARBAUTH(DEBRUJIN)` is doing.
+
+# Edit `<username>.JCLLIB(LAB07)` and submit it
+# Notice the output from it is `ABENDED  SYSTEM 0C6` ''BONUS'' Who can tell me what S0C6 means?
+# Its crashlog will be placed in `<username>.DUMP003` edit that file
+# Search for `REGS AT TIME OF ERROR`: in ISPF `F "REGS AT TIME OF ERROR"`
+# Hit `F11` to scroll right, and notice that Register 14 (E) is set to `F8C183F9` (or similar)
+
+```
++3C     REGS AT TIME OF ERROR    84F1C184 F2C184F3 C184F4C1 84F5C184 F6C184F7 C184F8C1 84F9C184 F0C185F1    (0-7)
++5C                              C185F2C1 85F3C185 F4C185F5 C185F6C1 85F7C185 00094FB0 F8C183F9 00000000    (8-F)
++7C     EC PSW AT TIME OF ERROR  078D0000 00C183FB 00020006 009B5800
+```
+
+# Edit `<username>.OVERFLOW.ARBAUTH(DEBRUJIN)` and turn the hex editor on with `HEX ON`. 
+# Search for `F8C183F9`: `F x'F8C183F9'`
+# The editor will find `8Ac9` but will put the cursor at the end. To fix this press `f10` and place your curson on the first 8 from the right hand side. Then press `F11`. It should look like this:
+[img[Screenshot_2022-07-31_17-01-06.png]]
+
+# Replace the hex `F8C183F9` with `DEADBEEF` or some other punny eye catcher HEX e.g. `ABADD00D` etc. and save your changes
+# Go back to `<username>.JCLLIB(LAB07)` and resubmit it, you'll get the same error
+# Open `<username>.DUMP003` and search for `DEADBEEF`. 
+
+!! Find where we are in memory
+
+# The first 4 chars of the de Brujin pattern are `Aa1A` or `C1 81 F1 C1`. Open `<username>.DUMP003` and search `F C181F1C1` then hit `F10` (the editor auto scrolled you to the right for the search). 
+# Take note of the memory location `09DB40`
+# Edit `<username>.OVERFLOW.ARBAUTH(DEBRUJIN)` again and replace `DEADBEEF` with `8009DB40`
+
+Should look like
+[img[Screenshot_2022-07-31_17-14-33.png]]
+
+# resubmit `<username>.JCLLIB(LAB07)`, notice we get a different abnormal end: `ABENDED  SYSTEM 0C1`

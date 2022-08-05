@@ -1,0 +1,30 @@
+created: 20220731183824487
+modified: 20220801071843575
+tags: 
+title: Lab 2 - First Overflow
+type: text/vnd.tiddlywiki
+
+Lets take a look at the first buffer overflow
+
+* In ISPF edit the file `<username>.OVERFLOW(LGBT400)`
+* On the `Command ===>` line type `HEX ON`
+
+This enables the hex editor:
+[img[Screenshot_2022-07-31_11-40-25.png]]
+
+Each byte now has its hex value underneath, vertically. LGBT in EBCDIC is `D3 C7 C2 E3`
+
+Pressing `F11` to scroll to the right you'll notice this line is 400 columns wide.
+
+!! Overflowing the HELLO buffer
+
+# Edit `<username>.JCLLIB(LAB02)`. To turn off the hex editor type `HEX OFF` and hit enter. Notice that `SYSUDUMP` output is set to `DC00.DUMP001`
+# This job will fail with `ABENDED  SYSTEM 0C6`
+# Edit the output from the dump in `DC00.DUMP001`
+# Search for LGBT in hex with `F D3C7C2E3` on the command line (RG means register)
+# Jump to line 4546 `L 4546`, this is memory, see all the LGBT in hex. 
+# Note down which memory address our `LGBT` starts at (this is the column after the line numbers, in hex)
+
+
+Image showing registry overwritten:
+[img[Screenshot_2022-07-31_11-50-09.png]]

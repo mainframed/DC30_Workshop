@@ -1,0 +1,15 @@
+created: 20220731185039915
+modified: 20220801071843621
+tags: 
+title: Lab 3 - Find our return address
+type: text/vnd.tiddlywiki
+
+Somewhere in the 400 bytes we overflows we overwrote the return address. Now we need to find it.
+
+# Edit `<username>.OVERFLOW(LOC400)`, notice its alpha/numeric every 4 bytes.
+# Edit `<username>.JCLLIB(LAB03)` and submit the job by typing `SUBMIT` in the command column. This job will fail with `ABENDED  SYSTEM 0C4`
+# Edit the dump `<username>.DUMP002`. Notice on line 3 we can see the PSW `0PSW AT ENTRY TO ABEND  078D0000 007C7C7C` which means the CPU tried to execute instruction at memory location `7C 7C 7C 7C`. 
+# Jump to line 384 `L 384` and notice the RETurn value was ` RET 7C7C7C7C`. `7C` in ebcdic is the character `@`.
+# Going back to `LOC400` where in this file is the character @ repeated 4 times? We can now control the return address.
+
+[img[Screenshot_2022-07-31_12-00-00.png]]

