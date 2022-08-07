@@ -186,7 +186,7 @@ TESTRUN
 //*
 ./ ADD NAME=LAB06,LIST=ALL
 //{usern}LAB6 JOB (TSO),                                         
-//             'DEBRUJIN PATTERN',
+//             'DEBRUIJN PATTERN',
 //             CLASS=A,                                         
 //             MSGCLASS=H,                                      
 //             MSGLEVEL=(2,1),                                  
@@ -194,9 +194,9 @@ TESTRUN
 //             NOTIFY=&SYSUID                                   
 //OPENTST   EXEC PGM=IKJEFT01                                   
 //SYSTSPRT    DD   SYSOUT=*                                     
-//STDOUT      DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(DEBRUJIN) 
+//STDOUT      DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(DEBRUIJN) 
 //SYSTSIN     DD    *                                           
- RX '{usern}.EXEC(DEBRUJIN)' '1000'                                  
+ RX '{usern}.EXEC(DEBRUIJN)' '1000'                                  
 //*    
 ./ ADD NAME=LAB07,LIST=ALL
 //{usern}LAB7   JOB (TSO),                   
@@ -210,7 +210,7 @@ TESTRUN
 //SYSPRINT DD   SYSOUT=*                  
 //STEPLIB  DD   DISP=SHR,DSN=SYSC.LINKLIB 
 //SYSUDUMP DD   DISP=SHR,DSN={usern}.DUMP003                  
-//INPUTDD  DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(DEBRUJIN)
+//INPUTDD  DD   DISP=SHR,DSN={usern}.OVERFLOW.ARBAUTH(DEBRUIJN)
 ./ ADD NAME=LAB08,LIST=ALL
 //{usern}LAB8   JOB (TSO),                                     
 //             'COMP WTOPOC',                              

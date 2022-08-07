@@ -4,7 +4,7 @@ tags:
 title: Lab 7 - De Brujin Overflow
 type: text/vnd.tiddlywiki
 
-OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a file with 1,000 characters in a de Brujin pattern. Instead of sending Opentst our username, we send it that pattern. That's what the line `//INPUTDD  DD   DISP=SHR,DSN=DC00.OVERFLOW.ARBAUTH(DEBRUJIN)` in `<username>.JCLLIB(LAB07)` doing.
+OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a file with 1,000 characters in a de Brujin pattern. Instead of sending Opentst our username, we send it that pattern. That's what the line `//INPUTDD  DD   DISP=SHR,DSN=DC00.OVERFLOW.ARBAUTH(DEBRUIJN)` in `<username>.JCLLIB(LAB07)` doing.
 
 # Open and SUBMIT `<username>.JCLLIB(LAB07)`
 # Notice the output from it is `ABENDED  SYSTEM 0C6` ''BONUS'' Who can tell me what S0C6 means?
@@ -21,7 +21,7 @@ OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a
 
 ```
 
-# Edit `<username>.OVERFLOW.ARBAUTH(DEBRUJIN)` and turn the hex editor on with `HEX ON`. 
+# Edit `<username>.OVERFLOW.ARBAUTH(DEBRUIJN)` and turn the hex editor on with `HEX ON`. 
 # Search for `F8C183F9`: `F x'F8C183F9'`
 # The editor will find `8Ac9` but will put the cursor at the end. To fix this press `f10` and place your curson on the first 8 from the right hand side. Then press `F11`. It should look like this:
 [img[Screenshot_2022-07-31_17-01-06.png]]
@@ -34,7 +34,7 @@ OPENTST is vulnerable to a buffer overflow (we went over it in class). We have a
 
 # The first 4 chars of the de Brujin pattern are `Aa1A` or `C1 81 F1 C1`. Open `<username>.DUMP003` and search `F C181F1C1` then hit `F10` (the editor auto scrolled you to the right for the search). 
 # Take note of the memory location `09DB40`
-# Edit `<username>.OVERFLOW.ARBAUTH(DEBRUJIN)` again and replace `DEADBEEF` with `8009DB40`
+# Edit `<username>.OVERFLOW.ARBAUTH(DEBRUIJN)` again and replace `DEADBEEF` with `8009DB40`
 
 Should look like
 [img[Screenshot_2022-07-31_17-14-33.png]]

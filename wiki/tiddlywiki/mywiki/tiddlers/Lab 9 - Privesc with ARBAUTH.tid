@@ -35,8 +35,8 @@ No we're going to use ARBAUTH and the overflow in OPENTST to change our permissi
 
 # Submit the job `<username>.JCLLIB(LAB11)` this generates shell code to change a users ACEE Flag 1 to `10110001`.
 # Using FTP download the file `<username>.LOAD(ACEEJOB)`.
-# Open the both DEBRUJIN and ACEEJOB with okteta: `okteta DEBRUJIN & okteta ACEEJOB`
-# Copy all bytes between `CAFEBABE` from ACEEJOB and paste them start at the first byte in `DEBRUJIN`.
+# Open the both DEBRUIJN and ACEEJOB with okteta: `okteta DEBRUIJN & okteta ACEEJOB`
+# Copy all bytes between `CAFEBABE` from ACEEJOB and paste them start at the first byte in `DEBRUIJN`.
 # Save this file as `PRIVESC`
 # Using FTP upload this file as ⚠️⚠️binary⚠️⚠️ to `<username>.OVERFLOW.ARBAUTH(PRIVESC)`
 #* `cd <username>.OVERFLOW.ARBAUTH`

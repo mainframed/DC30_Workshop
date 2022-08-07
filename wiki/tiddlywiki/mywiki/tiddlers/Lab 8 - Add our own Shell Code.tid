@@ -14,24 +14,24 @@ type: text/vnd.tiddlywiki
 #* type `cd <username>.LOAD`, 
 #* type `bin` for binary download. 
 #* type `get WTOPOC` to download our assembled binary
-# Using FTP also download `<username>.OVERFLOW.ARBAUTH(DEBRUJIN)`
+# Using FTP also download `<username>.OVERFLOW.ARBAUTH(DEBRUIJN)`
 #* `cd ..` to get out of `<username>.LOAD`
 #* `cd <username>.OVERFLOW.ARBAUTH`
 #* type `bin` 
-#* Finally `get DEBRUJIN`
+#* Finally `get DEBRUIJN`
 # Open WTOPOC with Okteta (or your hex editor of choice): `okteta WTOPOC`
 #* ''Note'' You can read the text in the file by changing the encoding to "EBCDIC 1047" in the bottom right.
 # highlight the hex between the `CAFEBABE` and copy it with `ctrl-c` [img[hexhiighlight.png]]
-# Open the de Brujin file in Okteta: `okteta DEBRUJIN` or File -> Open, highlight the first byte and press `ctrl-v`  [img[arbpoc.png]] 
-# Save the changes to DEBRUJIN as a new file called `SHELCODE` ⚠️⚠️ ''NOTICE'' ⚠️⚠️ This file name is missing an L on purpose, we have an 8 character limit.
-# Using FTP, upload your changed DEBRUJIN file to `<username>.OVERFLOW.ARBAUTH(SHELCODE)`:
+# Open the de Brujin file in Okteta: `okteta DEBRUIJN` or File -> Open, highlight the first byte and press `ctrl-v`  [img[arbpoc.png]] 
+# Save the changes to DEBRUIJN as a new file called `SHELCODE` ⚠️⚠️ ''NOTICE'' ⚠️⚠️ This file name is missing an L on purpose, we have an 8 character limit.
+# Using FTP, upload your changed DEBRUIJN file to `<username>.OVERFLOW.ARBAUTH(SHELCODE)`:
 #* Login to FTP and cd to `<username>.OVERFLOW.ARBAUTH` 
 #* Change to binary more with `bin`
 #* upload the file with `put SHELCODE`.
 
 !! Submitting our exploit
 
-# Edit `<username>.JCLLIB(LAB07)` and replace `DEBRUJIN` on line 12 with `SHELCODE` [img[shellcodejcl.png]]
+# Edit `<username>.JCLLIB(LAB07)` and replace `DEBRUIJN` on line 12 with `SHELCODE` [img[shellcodejcl.png]]
 # SAVE your changes and SUBMIT the job, it will still abend with `C03` but thats okay.
 #* If it abends with anything else go back to the previous step and make sure you uploaded the files as ⚠️⚠️''binary''⚠️⚠️
 

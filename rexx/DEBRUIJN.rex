@@ -6,16 +6,16 @@
 parse arg len
 /* Alphabets                                                          */
 if len = '' then do                                     
-  say "Missing argument length usage: DEBRUJIN <number>"
+  say "Missing argument length usage: DEBRUIJN <number>"
   exit                                                  
 end                                                     
 UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 LOWERCASE = "abcdefghijklmnopqrstuvwxyz"
 ALLDIGITS = "1234567890"
-x = debrujin(len)
+x = debruijn(len)
 say x
 exit
-debrujin:
+debruijn:
   pattern = ""
   do u=1 to length(UPPERCASE)
     do l=1 to length(LOWERCASE)

@@ -168,7 +168,7 @@ the following error message `IKT00203I ADDRESS SPACE CREATION FAILED`.
 - `usersjcl.py` creates `DC00.jcl` through `DC23.jcl` in the `./users` folder
 - `automation.py` a MVS automation python script used to deploy to docker
 - `matrix.txt` Follow the white rabbit
-- `rexx/DEBRUJIN.rex`: REXX script to generate Debrujin pattern
+- `rexx/DEBRUIJN.rex`: REXX script to generate de Bruijn pattern
 - `rexx/decodei.rex`: decodes MVS hex instructions to human readeable
 - `motd.txt` the CLIST run at logon to TSO
 - `mvs.sh` the container run script to launch web3270, hercules

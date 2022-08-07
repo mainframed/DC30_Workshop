@@ -53,18 +53,18 @@ docker run -d \
 
 # Using FTP download both rexx scripts in `<username>.EXEC`: 
 #* `cd <username>.exec` 
-#* `get DEBRUJIN DEBRUJIN.rexx` 
+#* `get DEBRUIJN DEBRUIJN.rexx` 
 #* `get DECODEI DECODEI.rexx` and exit FTP 
 #* this is already done for you on the workshop vm in the folder `~/labs`. 
-# In a linux terminal generate a de Brujin pattern with `rexx ~/labs/DEBRUJIN.rexx 1500`
-# Copy it to your copy/paste buffer: `rexx ~/labs/DEBRUJIN.rexx 1500 |  xsel --clipboard --input`
+# In a linux terminal generate a de Brujin pattern with `rexx ~/labs/DEBRUIJN.rexx 1500`
+# Copy it to your copy/paste buffer: `rexx ~/labs/DEBRUIJN.rexx 1500 |  xsel --clipboard --input`
 
 !! Overflow
 
 Before we get started make sure you've got the hercules console open at http://localhost:8888/ (user/pass: `defcon`) and click on ''System Log''. 
 
 # In a linux terminal connect to the FTP server: `ncat -v localhost 2121`
-# Once connected type `USER <PASTE DEBRUJIN PATTERN>`
+# Once connected type `USER <PASTE DEBRUIJN PATTERN>`
 # You will get no response cause you've crashed the FTP server
 # Notice in the hercules console at http://localhost:8888/ the message `/ IEF450I FTPDDC30 FTPDDC30 - ABEND S0C4 U0000` means we've crashed FTPD
 #* The console doesn't autoupdate, so you'll need to click on `Auto Refresh` to see these updates. Turn it off again when done.

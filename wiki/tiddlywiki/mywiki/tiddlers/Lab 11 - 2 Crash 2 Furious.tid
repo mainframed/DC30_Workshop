@@ -7,7 +7,7 @@ type: text/vnd.tiddlywiki
 
 !! Creating the New buffer
 
-# Run `printf 'user ' > pattern2; rexx ~/labs/DEBRUJIN.rexx 1500 >> pattern2`
+# Run `printf 'user ' > pattern2; rexx ~/labs/DEBRUIJN.rexx 1500 >> pattern2`
 # Edit pattern2 with your editor of choice: 
 #* e.g. `okteta pattern2` on the workshop vm
 # Search for (ctrl-f in okteta) our pattern: `Bh7B`
