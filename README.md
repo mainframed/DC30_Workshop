@@ -6,39 +6,44 @@ The scripts here are used to build the MVS 3.8j virtual mainframe for the DEFCON
 
 ## Use docker
 
+### Minimal Container
+
 You can use docker instead of building from scratch: https://hub.docker.com/r/mainframed767/defcon30
 
-To run the container use the below commands, make sure to change `$(pwd)/docker` to a folder for your system. 
-The `$(pwd)` puts the docker volumes in your current working folder. 
+Thank you for taking a look at the DEFCON 30 Mainframe Buffer Overflow workshop. This docker container has everything you need to learn how to do MVS buffer overflows!
 
-### Minimal Container
-Use this command if you just want to run it self contained. :warning: If you remove and relaunch the container
-you will lose any and all changes you made to the mainframe environment.
+To start the class run this command to deploy the container and go to http://localhost:8080
 
-```bash
+```
 docker run -d \
   --name=defcon30 \
-  -p 2121:2121 \
+  -e HUSER=defcon \
+  -e HPASS=defcon \
+  -p 2323:3223 \
+  -p 8888:8888 \
+  -p 2121-2141:2121-2141 \
   -p 8443:8443 \
   -p 8080:8080 \
-  -p 2323:3223 \
   -p 31337-31347:31337-31347 \
+  -v ~/dumps:/printers \
   --restart unless-stopped \
   mainframed767/defcon30:latest
 ```
 
-| Port         | Description                                                                       |
-|--------------|-----------------------------------------------------------------------------------|
-| 21021        | Vulnerable FTP Server Port                                                        |
-| 8443         | Web based 3270 client which auto connects to lab mainframe                        |
-| 8080         | The class Wiki                                                                    |
-| 2323         | Encrypted TN3270 server if you want to use your own emulator like x3270 or PW3270 |
-| 31337-32337  | FTP Server passive port range                                                     |
+Ports explained:
+
+- 2323: 3270 server port
+- 8443: Web based tn3270 client, the secret is D3FC0N
+- 8888: Hercules console web server. Username/password: defcon
+- 8080: The workshop instructions
+- 2121-2141 & 31337-31347: Range of web ports for FTP server
+
+Python scripts mentioned can be found here: https://github.com/mainframed/DC30_Workshop/tree/main/extra
 
 ### Expert Container
 
 This exposes more ports and allows you to have volumes with permanence. Gives access to the 
-hercules and MVS consoles, the card readers/writers.
+hercules and MVS consoles, the card readers/writers, etc.
 
 ```bash
 docker run -d \
