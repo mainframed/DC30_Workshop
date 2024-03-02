@@ -302,7 +302,8 @@ class herc_automation:
                              #IKT005I TCAS IS INITIALIZED
         if ftp:
             self.wait_for_string("FTP005I Startup Complete")
-        self.wait_for_string("IKT005I TCAS IS INITIALIZED")
+        else:
+            self.wait_for_string("IKT005I TCAS IS INITIALIZED")
 
     def shutdown_mvs(self, cust=False):
         self.send_oper('$PJES2,ABEND')
