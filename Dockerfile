@@ -23,7 +23,7 @@ COPY --from=getsploit_builder /hello.load /builder/GETSPLOIT/hello.load
 RUN git clone --depth 1 https://github.com/jake-mainframe/ARBAUTH
 # Build the JCL
 RUN ./upload.py motd.txt
-RUN ./usersjcl.py
+RUN mkdir ./users && ./usersjcl.py
 RUN for i in users/*.jcl; do rdrprep $i; mv reader.jcl $i.ebcdic; ls $i.ebcdic; done
 COPY extra/FTPD.MVP /MVSCE/MVP/packages/FTPD
 # Submit the JCL to MVS/CE
