@@ -44,7 +44,7 @@ USERJOB = ('''//{usern} JOB (1),'ADD {usern}',CLASS=S,MSGLEVEL=(1,1),
 //             UNIT=SYSDA,VOL=SER=PUB000,                          
 //             SPACE=(TRK,(3,3,3),RLSE),                              
 //             DCB=DEFCON.OVERFLOW     
-//OVERFLOW DD  DSN={usern}.OVERFLOW.ARBAUTH,DISP=(NEW,CATLG),    
+//ARBAUTH  DD  DSN={usern}.OVERFLOW.ARBAUTH,DISP=(NEW,CATLG),    
 //             UNIT=SYSDA,VOL=SER=PUB000,                          
 //             SPACE=(TRK,(3,3,3),RLSE),                              
 //             DCB=DEFCON.OVERFLOW.ARBAUTH      
@@ -65,9 +65,6 @@ USERJOB = ('''//{usern} JOB (1),'ADD {usern}',CLASS=S,MSGLEVEL=(1,1),
 //             SPACE=(TRK,(10,5),RLSE),                              
 //             DCB=(DSORG=PS,RECFM=FB,LRECL=121,BLKSIZE=400)
 //JCLLIB   DD  DSN={usern}.JCLLIB,DISP=(NEW,CATLG),
-//             UNIT=SYSDA,VOL=SER=PUB000,
-//             SPACE=(CYL,(1,1,20)),DCB=SYS1.MACLIB 
-//EXEC     DD  DSN={usern}.EXEC,DISP=(NEW,CATLG),
 //             UNIT=SYSDA,VOL=SER=PUB000,
 //             SPACE=(CYL,(1,1,20)),DCB=SYS1.MACLIB 
 //* COPY ALL MEMBERS FROM ONE PDS TO ANOTHER
