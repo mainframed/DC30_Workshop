@@ -27,9 +27,10 @@ RUN mkdir ./users && ./usersjcl.py
 RUN for i in users/*.jcl; do rdrprep $i; mv reader.jcl $i.ebcdic; ls $i.ebcdic; done
 COPY extra/FTPD.MVP /MVSCE/MVP/packages/FTPD
 # Submit the JCL to MVS/CE
-RUN python3 -u automation.py --mvsce /MVSCE --initial
-RUN python3 -u automation.py --mvsce /MVSCE --ftp
-RUN python3 -u automation.py --mvsce /MVSCE --users
+# until ./sysgen.py --timeout 3600 --version ${RELEASE_VERSION} --CONTINUE; do echo "Failed, rerunning"; done
+RUN until python3 -u automation.py --mvsce /MVSCE --initial; do echo "Failed, trying again"; done
+RUN until python3 -u automation.py --mvsce /MVSCE --ftp; do echo "Failed, trying again"; done
+RUN until python3 -u automation.py --mvsce /MVSCE --users; do echo "Failed, trying again"; done
 # Install web3270 and its requirements
 WORKDIR /
 RUN git clone --depth 1 https://github.com/MVS-sysgen/web3270.git
