@@ -288,7 +288,7 @@ class herc_automation:
                 continue
             
 
-    def ipl(self, step_text='', clpa=False):
+    def ipl(self, step_text='', clpa=False,ftp=False):
         print(step_text)
         self.reset_hercules(clpa=clpa)
         #self.wait_for_string("0:0151 CKD")
@@ -300,6 +300,8 @@ class herc_automation:
             # self.wait_for_string('$HASP426 SPECIFY OPTIONS - HASP-II, VERSION JES2 4.1')
             # self.send_oper('r 0,noreq')
                              #IKT005I TCAS IS INITIALIZED
+        if ftp:
+            self.wait_for_string("FTP005I Startup Complete")
         self.wait_for_string("IKT005I TCAS IS INITIALIZED")
 
     def shutdown_mvs(self, cust=False):
@@ -384,9 +386,9 @@ try:
 
     build.shutdown_mvs(cust=True)
   elif args.ftp:
-    build.ipl(clpa=False)
+    build.ipl(clpa=False,ftp=True)
     print("[AUTOMATION]  FTP'ing OVERFLOW files")
-    build.wait_for_string("FTP005I Startup Complete")
+#    build.wait_for_string("FTP005I Startup Complete")
     print("[AUTOMATION] Running command: for i in {}/overflows/*; do lftp -e \"cd DEFCON.OVERFLOW; put $i; bye\" -u ibmuser,sys1 localhost:2121; done".format(cwd))
     p = os.system("for i in {}/overflows/*; do lftp -e \"cd DEFCON.OVERFLOW; put $i; bye\" -u ibmuser,sys1 localhost:2121; done".format(cwd))
     print("Return code:{}".format(p))
