@@ -295,7 +295,7 @@ class herc_automation:
 
         if clpa:
             self.send_herc("ipl 150")
-            self.wait_for_string("HHC00010A Enter input for console 0:0009")
+            self.wait_for_string("HHC00010A Enter '/' input for console 0:0009")
             self.send_oper("r 0,clpa")
             # self.wait_for_string('$HASP426 SPECIFY OPTIONS - HASP-II, VERSION JES2 4.1')
             # self.send_oper('r 0,noreq')
@@ -417,7 +417,6 @@ try:
         build.check_maxcc(jcl_file.stem.split('.')[0])
 
     build.shutdown_mvs(cust=True)
-
 
 finally:
   build.quit_hercules()

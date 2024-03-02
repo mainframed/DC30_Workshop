@@ -4,17 +4,22 @@
 
 The scripts here are used to build the MVS 3.8j virtual mainframe for the DEFCON 30 workshop. 
 
+Thank you for taking a look at the DEFCON 30 Mainframe Buffer Overflow workshop. 
+
 ## Use docker
 
+This docker container has everything you need to learn how to do MVS buffer overflows!
+
+To start the class run the container and go to http://localhost:8080
+
+To run the container use the below commands, make sure to change `$(pwd)/docker` to a folder for your system. 
+The `$(pwd)` puts the docker volumes in your current working folder. 
+
 ### Minimal Container
+Use this command if you just want to run it self contained. :warning: If you remove and relaunch the container
+you will lose any and all changes you made to the mainframe environment.
 
-You can use docker instead of building from scratch: https://hub.docker.com/r/mainframed767/defcon30
-
-Thank you for taking a look at the DEFCON 30 Mainframe Buffer Overflow workshop. This docker container has everything you need to learn how to do MVS buffer overflows!
-
-To start the class run this command to deploy the container and go to http://localhost:8080
-
-```
+```bash
 docker run -d \
   --name=defcon30 \
   -e HUSER=defcon \

@@ -7,13 +7,14 @@ COPY GETSPLOIT/hello.c hello.c
 RUN wine /jcc/jcc.exe -I/jcc/include/ -o hello.c
 RUN /jcc/prelink -s /jcc/objs /hello.load /hello.obj
 
-FROM mainframed767/mvsce:2.0.2 as MVSCE_builder
+FROM mainframed767/mvsce:2.0.3 as MVSCE_builder
 # Install rdrprep
 RUN unset LD_LIBRARY_PATH && apt-get update && apt-get install -yq git build-essential python3-pip lftp
 RUN pip3 install ebcdic
 WORKDIR /
 RUN git clone --depth 1 https://github.com/mvslovers/rdrprep.git
 WORKDIR /rdrprep
+ENV HOST_ARCH=NOT_PENTIUM
 RUN make && make install
 # Copy compiled hello.load
 WORKDIR /builder
@@ -38,7 +39,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 
 # Final Build
-FROM mainframed767/mvsce:2.0.2
+FROM mainframed767/mvsce:2.0.3
 COPY --from=MVSCE_builder /MVSCE /MVSCE
 COPY --from=MVSCE_builder /root/.local /root/.local
 COPY --from=MVSCE_builder /web3270 /web3270
